@@ -6,6 +6,7 @@ Some of the current features are:
 Settings with editable name, password, age and the ability to delete your user details.
 
 Features in the works:
+
 Coffee Shop and more options...
 
 Features to be implemented:
