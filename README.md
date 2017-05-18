@@ -10,4 +10,4 @@ Coffee Shop and more options...
 
 Features to be implemented:
 
-Pizza Shop, Tech Shop,Hangman, rock-paper-scissors, a number guessing game, Tasks and a Help Menu
+Pizza Shop, Tech Shop, Hangman, rock-paper-scissors, a number guessing game, Tasks and a Help Menu
