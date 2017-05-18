@@ -6,11 +6,8 @@ Some of the current features are:
 Settings with editable name, password, age and the ability to delete your user details.
 
 Features in the works:
-Coffee Shop
-More options...
+Coffee Shop and more options...
 
 Features to be implemented:
-Pizza Shop and Tech Shop
-Hangman, rock-paper-scissors and a number guessing game.
-Tasks
-Help Menu
+
+Pizza Shop, Tech Shop,Hangman, rock-paper-scissors, a number guessing game, Tasks and a Help Menu
