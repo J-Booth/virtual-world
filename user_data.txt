@@ -1,7 +1,1 @@
-Guest,None,50,1000000
-harambe,harambe,16,15000
-Hillary_Clinton,lies,70,1000000
-John,Test,17,1000
-admin,a,50,50000
-Donald_Trump,2016,70,1000000
-Joshua,Test,16,1500
+
