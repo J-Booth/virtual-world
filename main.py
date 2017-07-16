@@ -49,7 +49,6 @@ class VirtualWorld(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(LoginPage)
-        print('showing LoginPage')
         self.init_window()
 
     def init_window(self):
