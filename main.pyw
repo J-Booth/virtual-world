@@ -1513,6 +1513,27 @@ class User:
         else:
             return False
 
+    @staticmethod
+    def deposit(username, amount):
+        """ Withdraws money from the user's current balance. """
+        user_balance = User.get_data(username)['balance']
+        user_data = list(Check.file()['user_data'])
+        password = User.get_data(username)['password']
+        age = User.get_data(username)['age']
+        print("Depositing {} from {}".format(amount, username))
+        del_user = username + ',' + password + ',' + age + ',' + \
+            user_balance
+        user_data.remove(del_user)
+
+        new_balance = str(float(user_balance) + amount)
+
+        new_user = username + ',' + password + ',' + age + ',' + \
+            new_balance
+        user_data.append(new_user)
+
+        with open(user_data_file, 'w') as f:
+            f.write('\n'.join(user_data))
+
 
 class Options:
 
