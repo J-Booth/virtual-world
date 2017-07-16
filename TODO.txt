@@ -1,7 +1,4 @@
-# TODO.txt
-(A) +Options needs redoing so that it can allow for more options to be added.
-(B) Completely redo +CoffeeShopPage
-(C) Add @Withdraw and @Deposit +User
-(D) Add +TechShopPage and +PizzaShopPage
-(E) Add +HangmanPage and +GuessMyNumberPage
-(F) @submit_button needs reworking so that it checks input live instead of onclick. +SignUp
+# TODO (A) +Options needs redoing so that it can allow for more options to be added.
+# TODO (B) Add +TechShopPage and +PizzaShopPage
+# TODO (C) Add +HangmanPage and +GuessMyNumberPage
+# TODO (D) @submit_button needs reworking so that it checks input live instead of onclick. +SignUp
