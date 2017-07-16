@@ -27,19 +27,6 @@
 
 from __init__ import *
 
-# Fonts
-LARGE_FONT = ("Verdana", 25)
-MEDIUM_FONT = ("Verdana", 12)
-SMALL_FONT = ("Verdana", 8)
-
-# Data Files
-options_file = 'options.txt'
-current_user_file = 'current_user.txt'
-user_data_file = 'user_data.txt'
-user_names_file = 'user_names.txt'
-
-CURRENT_DATA_F = 'test.txt'
-
 
 class VirtualWorld(tk.Tk):
 
@@ -831,7 +818,8 @@ class CoffeeShopPage(tk.Frame):
                                    sticky="W")
         self.cappuccino_price = ttk.Label(self, text="$3.00", font=MEDIUM_FONT)
         self.cappuccino_price.grid(row=14, column=4, columnspan=3, pady=10)
-        cappuccino_vcmd = (self.register(self.confirm), '%P', '%S', 'cappuccino')
+        cappuccino_vcmd = (self.register(self.confirm), '%P', '%S',
+                           'cappuccino')
         self.cappuccino_amount = ttk.Entry(self, validate="key",
                                            justify="center",
                                            validatecommand=cappuccino_vcmd)
@@ -849,16 +837,15 @@ class CoffeeShopPage(tk.Frame):
         self.espresso_amount.grid(row=15, column=10, columnspan=2, pady=10)
 
         # Flat white label, price and amount entry
-        self.flat_white_label = ttk.Label(self, text="Flat White",
-                                          font=MEDIUM_FONT)
-        self.flat_white_label.grid(row=16, column=1, columnspan=5, pady=10,
-                                   sticky="W")
-        self.flat_white_price = ttk.Label(self, text="$3.00", font=MEDIUM_FONT)
-        self.flat_white_price.grid(row=16, column=4, columnspan=3, pady=10)
-        flat_white_vcmd = (self.register(self.confirm), '%P', '%S', 'flat_white')
-        self.flat_white_amount = ttk.Entry(self, validate="key", justify="center",
-                                           validatecommand=flat_white_vcmd)
-        self.flat_white_amount.grid(row=16, column=10, columnspan=2, pady=10)
+        self.flat_w_label = ttk.Label(self, text="Flat White", font=MEDIUM_FONT)
+        self.flat_w_label.grid(row=16, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.flat_w_price = ttk.Label(self, text="$3.00", font=MEDIUM_FONT)
+        self.flat_w_price.grid(row=16, column=4, columnspan=3, pady=10)
+        flat_w_vcmd = (self.register(self.confirm), '%P', '%S', 'flat_white')
+        self.flat_w_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=flat_w_vcmd)
+        self.flat_w_amount.grid(row=16, column=10, columnspan=2, pady=10)
 
         # Latte label, price and amount entry
         self.latte_label = ttk.Label(self, text="Latte", font=MEDIUM_FONT)
@@ -871,7 +858,7 @@ class CoffeeShopPage(tk.Frame):
                                       validatecommand=latte_vcmd)
         self.latte_amount.grid(row=17, column=10, columnspan=2, pady=10)
 
-        # Mocha umbrella label, price and amount entry
+        # Mocha label, price and amount entry
         self.mocha_label = ttk.Label(self, text="Mocha", font=MEDIUM_FONT)
         self.mocha_label.grid(row=18, column=1, columnspan=5, pady=10,
                               sticky="W")
@@ -915,21 +902,21 @@ class CoffeeShopPage(tk.Frame):
         self.cappuccino_amount.insert(0, "")
         self.espresso_amount.delete(0, 4)
         self.espresso_amount.insert(0, "")
-        self.flat_white_amount.delete(0, 4)
-        self.flat_white_amount.insert(0, "")
+        self.flat_w_amount.delete(0, 4)
+        self.flat_w_amount.insert(0, "")
         self.latte_amount.delete(0, 4)
         self.latte_amount.insert(0, "")
         self.mocha_amount.delete(0, 4)
         self.mocha_amount.insert(0, "")
 
-    def confirm(self, P, S, colour):
+    def confirm(self, P, S, _type):
         """
         Only allow a 1 digit integer and if the total of all the entries
         is greater than one, enable the cart button.
 
         :param P: allowed value (%P)
         :param S: text being inserted (%S)
-        :param colour: the umbrella colour (str)
+        :param _type: the coffee type (str)
         :return: True or False
         """
         allowed_value = P  # So the values of P and S are understandable
@@ -945,34 +932,34 @@ class CoffeeShopPage(tk.Frame):
             except ValueError:
                 print("Input is not an integer!")
         if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
-            with open(CURRENT_DATA_F, 'r') as file:
+            with open(COFFEE_DATA_F, 'r') as file:
                 current_data = [line.strip() for line in file]
             data = {}
-            with open(CURRENT_DATA_F, 'r') as file:
+            with open(COFFEE_DATA_F, 'r') as file:
                 for line in file:
                     option, value = line.strip().split(':')
                     data[option] = value
-            if data[colour] == str(allowed_value):
-                print("No changes to be made to {}".format(CURRENT_DATA_F))
+            if data[_type] == str(allowed_value):
+                print("No changes to be made to {}".format(COFFEE_DATA_F))
             else:
-                current_data.remove('{}:{}'.format(colour, data[colour]))
+                current_data.remove('{}:{}'.format(_type, data[_type]))
                 current_data.remove('{}:{}'.format('total', data['total']))
-                data[colour] = int(allowed_value)
+                data[_type] = int(allowed_value)
                 data['total'] = 0
                 total = 0
                 for item in current_data:
                     item = item.split(':')
                     item.pop(0)
                     total += int(item[0])
-                data['total'] = total + data[colour]
-                current_data.append('{}:{}'.format(colour, data[colour]))
+                data['total'] = total + data[_type]
+                current_data.append('{}:{}'.format(_type, data[_type]))
                 current_data.append('{}:{}'.format('total', data['total']))
             if int(data['total']) > 0:
                 self.buy_button.configure(state='normal')
             else:
                 self.buy_button.configure(state='disabled')
-            with open(CURRENT_DATA_F, 'w') as file:
-                print("Writing new data to {}".format(CURRENT_DATA_F))
+            with open(COFFEE_DATA_F, 'w') as file:
+                print("Writing new data to {}".format(COFFEE_DATA_F))
                 file.write('\n'.join(current_data))
             return True
         else:
@@ -987,7 +974,7 @@ class CoffeeShopPage(tk.Frame):
         username = self.toplevel.username.get()
         password = self.toplevel.password.get()
         name_and_pass = username + ',' + password
-        amount = 100  # Test value
+        amount = 1
         print(name_and_pass)
         if name_and_pass == ',':
             print("Nothing was entered!")
@@ -996,20 +983,21 @@ class CoffeeShopPage(tk.Frame):
             return False
         elif Check.in_user_data(Check.all_user_data(name_and_pass)):
             print("User '{}' Exists!".format(username))
-            self.toplevel.user_info.configure(
-                text="Press 'Confirm' to confirm your order.",
-                foreground="green")
+            self.toplevel.user_info.configure(text="")
             purchase = (lambda: self.purchase(username, amount))
             self.toplevel.submit = ttk.Button(self.toplevel, text="Confirm",
                                               command=purchase)
             self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
         else:
-            self.toplevel.user_info.configure(text="Incorrect username/password",
-                                              foreground="red")
+            self.toplevel.error_label = ttk.Label(
+                self.toplevel, text="Incorrect username/password",
+                foreground="red")
+            self.toplevel.error_label.grid(row=14, column=9, columnspan=20)
             return False
 
     def purchase(self, username, amount):
-        if User.withdraw(username, amount):
+        print("AMOUNT: ", amount)
+        if User.withdraw(username, amount) is True:
             self.toplevel.user_info.configure(text="Transaction successful",
                                               foreground="green")
         elif User.withdraw(username, amount) == "insufficient_funds":
@@ -1029,12 +1017,16 @@ class CoffeeShopPage(tk.Frame):
             self.toplevel.resizable(width=False, height=False)
             self.toplevel.title('Order')
 
-            ttk.Label(self.toplevel, text="Here is your order:", font=MEDIUM_FONT).grid(row=0, column=0, columnspan=20, padx=5, pady=5)
+            order_label = ttk.Label(self.toplevel, text="Here is your order:",
+                                    font=MEDIUM_FONT)
+            order_label.grid(row=0, column=0, columnspan=20, padx=5, pady=5)
             type_label = ttk.Label(self.toplevel, text="Type", font=SMALL_FONT)
             type_label.grid(row=2, column=0, columnspan=10, pady=10, padx=5)
-            price_label = ttk.Label(self.toplevel, text="Amount", font=SMALL_FONT)
+            price_label = ttk.Label(self.toplevel, text="Amount",
+                                    font=SMALL_FONT)
             price_label.grid(row=2, column=10, columnspan=9, pady=10)
-            amount_label = ttk.Label(self.toplevel, text="Price", font=SMALL_FONT)
+            amount_label = ttk.Label(self.toplevel, text="Price",
+                                     font=SMALL_FONT)
             amount_label.grid(row=2, column=20, pady=10)
 
             data = {}
@@ -1050,23 +1042,27 @@ class CoffeeShopPage(tk.Frame):
                         else:
                             coffee_type = option
                         count += 1
-                        print(option, data[option])
-                        ttk.Label(self.toplevel, text=coffee_type.title()).grid(row=count, column=0, columnspan=10)
-                        ttk.Label(self.toplevel, text=data[option]).grid(row=count, column=10, columnspan=9)
-                        ttk.Label(self.toplevel, text=price).grid(row=count, column=20)
+                        ttk.Label(self.toplevel, text=coffee_type.title())\
+                            .grid(row=count, column=0, columnspan=10)
+                        ttk.Label(self.toplevel, text=data[option])\
+                            .grid(row=count, column=10, columnspan=9)
+                        ttk.Label(self.toplevel, text=price)\
+                            .grid(row=count, column=20)
 
             # Entries
             username_label = ttk.Label(self.toplevel, text="Username:",
                                        font=SMALL_FONT)
             username_label.grid(row=9, column=7, columnspan=11, pady=5)
             self.toplevel.username = ttk.Entry(self.toplevel)
-            self.toplevel.username.grid(row=10, column=9, columnspan=12, sticky='W', padx=20)
+            self.toplevel.username.grid(row=10, column=9, columnspan=12,
+                                        sticky='W', padx=20)
 
             password_label = ttk.Label(self.toplevel, text="Password:",
                                        font=SMALL_FONT)
             password_label.grid(row=11, column=7, columnspan=11, pady=5)
             self.toplevel.password = ttk.Entry(self.toplevel, show="*")
-            self.toplevel.password.grid(row=12, column=9, columnspan=12, sticky="E", padx=20)
+            self.toplevel.password.grid(row=12, column=9, columnspan=12,
+                                        sticky="E", padx=20)
 
             submit_command = (lambda: self.submit_button())
             cancel_command = (lambda: self.remove_window())
@@ -1199,7 +1195,7 @@ class Check:
             age = User.get_data(username)['age']
             balance = User.get_data(username)['balance']
             return user_info + ',' + age + ',' + balance
-        except:
+        except KeyError:
             return None
 
     @staticmethod
@@ -1275,8 +1271,7 @@ class User:
     @staticmethod
     def get_current():
         with open(current_user_file, 'r') as file:
-            for line in file:
-                user, pwd, age, balance = line.strip().split(',')
+            user, pwd, age, balance = file.readline().split(',')
         return {"username": user, "password": pwd,
                 "age": age, "balance": balance}
 
@@ -1368,6 +1363,12 @@ class User:
 
     @staticmethod
     def delete(username):
+        """
+        Delete a user from the user data.
+
+        :param username: str
+        :return: None
+        """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         age = User.get_data(username)['age']
@@ -1387,12 +1388,29 @@ class User:
             f.write('\n'.join(user_names))
 
     @staticmethod
-    def withdraw(user, amount):
-        print("Withdrawing {} from {}".format(amount, user))
-        if amount > 10000:
-            return "insufficient_funds"
-        elif 0 < amount < 10000:
+    def withdraw(username, amount):
+        """ Withdraws money from the user's current balance. """
+        user_balance = User.get_data(username)['balance']
+        if int(user_balance) >= amount:
+            user_data = list(Check.file()['user_data'])
+            password = User.get_data(username)['password']
+            age = User.get_data(username)['age']
+            print("Withdrawing {} from {}".format(amount, username))
+            del_user = username + ',' + password + ',' + age + ',' + \
+                user_balance
+            user_data.remove(del_user)
+
+            new_balance = str(int(user_balance) - amount)
+
+            new_user = username + ',' + password + ',' + age + ',' + \
+                new_balance
+            user_data.append(new_user)
+
+            with open(user_data_file, 'w') as f:
+                f.write('\n'.join(user_data))
             return True
+        elif int(user_balance) < amount:
+            return "insufficient_funds"
         else:
             return False
 
