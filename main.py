@@ -822,7 +822,8 @@ class CoffeeShopPage(tk.Frame):
         self.cappuccino_label.grid(row=14, column=1, columnspan=5, pady=10,
                                    sticky="W")
         self.cappuccino_price = ttk.Label(self, font=MEDIUM_FONT,
-                                          text="${:.2f}".format(self.cappu_cost))
+                                          text="${:.2f}"
+                                          .format(self.cappu_cost))
         self.cappuccino_price.grid(row=14, column=4, columnspan=3, pady=10)
         cappuccino_vcmd = (self.register(self.confirm), '%P', '%S',
                            'cappuccino')
@@ -832,19 +833,22 @@ class CoffeeShopPage(tk.Frame):
         self.cappuccino_amount.grid(row=14, column=10, columnspan=2, pady=10)
 
         # Espresso label, price and amount entry
-        self.espresso_label = ttk.Label(self, text="Espresso", font=MEDIUM_FONT)
+        self.espresso_label = ttk.Label(self, text="Espresso",
+                                        font=MEDIUM_FONT)
         self.espresso_label.grid(row=15, column=1, columnspan=5, pady=10,
                                  sticky="W")
         self.espresso_price = ttk.Label(self, font=MEDIUM_FONT,
                                         text="${:.2f}".format(self.espre_cost))
         self.espresso_price.grid(row=15, column=4, columnspan=3, pady=10)
         espresso_vcmd = (self.register(self.confirm), '%P', '%S', 'espresso')
-        self.espresso_amount = ttk.Entry(self, validate="key", justify="center",
+        self.espresso_amount = ttk.Entry(self, validate="key",
+                                         justify="center",
                                          validatecommand=espresso_vcmd)
         self.espresso_amount.grid(row=15, column=10, columnspan=2, pady=10)
 
         # Flat white label, price and amount entry
-        self.flat_w_label = ttk.Label(self, text="Flat White", font=MEDIUM_FONT)
+        self.flat_w_label = ttk.Label(self, text="Flat White",
+                                      font=MEDIUM_FONT)
         self.flat_w_label.grid(row=16, column=1, columnspan=5, pady=10,
                                sticky="W")
         self.flat_w_price = ttk.Label(self, font=MEDIUM_FONT,
@@ -879,13 +883,16 @@ class CoffeeShopPage(tk.Frame):
                                       validatecommand=mocha_vcmd)
         self.mocha_amount.grid(row=18, column=10, columnspan=2, pady=10)
 
+        # Maximum number of coffees
+        self.amount_label = ttk.Label(self, font=SMALL_FONT, foreground="red",
+                                      text="Maximum of 9 of each coffee type.")
+        self.amount_label.grid(row=19, column=1, columnspan=9)
+
         # Total
         total_label = ttk.Label(self, text="Total:", font=MEDIUM_FONT)
         total_label.grid(row=20, column=1, sticky="W")
-        self.total_cost = 0.00
         self.total_cost_label = ttk.Label(self, font=MEDIUM_FONT,
-                                          text="${:.2f}".format(self.total_cost)
-                                          )
+                                          text="$0.00")
         self.total_cost_label.grid(row=20, column=1, columnspan=6,
                                    padx=10, sticky="E")
 
@@ -904,7 +911,8 @@ class CoffeeShopPage(tk.Frame):
         self.buy_button = tk.Button(self, compound=tk.TOP, relief="flat",
                                     width=80, height=40, image=self.buy_img,
                                     command=buy_window, state='disabled')
-        self.buy_button.grid(row=20, column=7, columnspan=6, sticky="E", pady=5)
+        self.buy_button.grid(row=20, column=7, columnspan=6, sticky="E",
+                             pady=5)
         self.buy_button.image = self.buy_img
 
         CoffeeShopPage.reset_order_data()
@@ -913,16 +921,11 @@ class CoffeeShopPage(tk.Frame):
         """
         Removes all data from the entries.
         """
-        self.cappuccino_amount.delete(0, 4)
-        self.cappuccino_amount.insert(0, "")
-        self.espresso_amount.delete(0, 4)
-        self.espresso_amount.insert(0, "")
-        self.flat_w_amount.delete(0, 4)
-        self.flat_w_amount.insert(0, "")
-        self.latte_amount.delete(0, 4)
-        self.latte_amount.insert(0, "")
-        self.mocha_amount.delete(0, 4)
-        self.mocha_amount.insert(0, "")
+        for amount in (self.cappuccino_amount, self.espresso_amount,
+                       self.flat_w_amount, self.latte_amount,
+                       self.mocha_amount):
+            amount.delete(0, 1)
+            amount.insert(0, "")
 
     def confirm(self, P, S, _type):
         """
@@ -1140,7 +1143,8 @@ class CoffeeShopPage(tk.Frame):
 
                     password_label = ttk.Label(self.toplevel, text="Password:",
                                                font=SMALL_FONT)
-                    password_label.grid(row=11, column=7, columnspan=11, pady=5)
+                    password_label.grid(row=11, column=7, columnspan=11,
+                                        pady=5)
                     self.toplevel.password = ttk.Entry(self.toplevel, show="*")
                     self.toplevel.password.grid(row=12, sticky="E", padx=20,
                                                 column=9, columnspan=12)
