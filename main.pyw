@@ -27,16 +27,6 @@
 
 from __init__ import *
 
-# Fonts
-LARGE_FONT = ("Verdana", 25)
-MEDIUM_FONT = ("Verdana", 12)
-
-# Data Files
-options_file = 'options.txt'
-current_user_file = 'current_user.txt'
-user_data_file = 'user_data.txt'
-user_names_file = 'user_names.txt'
-
 
 class VirtualWorld(tk.Tk):
 
@@ -92,11 +82,6 @@ class VirtualWorld(tk.Tk):
     def hide_frame(self, cont):
         frame = self.frames[cont]
         frame.lower()
-
-    def remove_window(self):
-        """ Removes Username and Password window """
-        self.toplevel.destroy()
-        self.toplevel = None
 
     def menu_bar(self, controller):
         """ Menu bar creation """
@@ -187,69 +172,6 @@ class VirtualWorld(tk.Tk):
         with open(current_user_file, 'w') as f:
             f.write(user)
         self.show_frame(LoginPage)
-
-    def open_window(self, setting):
-        """ Username and Password window """
-        if self.toplevel is None:
-            current_user = Check.file()['current_user']
-            if 'Guest,None,50,1000000' in list(current_user):
-                print('This is a guest user!')
-                return False
-            else:
-                pass
-
-            self.toplevel = tk.Toplevel(self)
-            self.toplevel.protocol('WM_DELETE_WINDOW',
-                                   lambda: VirtualWorld.remove_window(self))
-            self.toplevel.focus_set()
-            self.toplevel.resizable(width=False, height=False)
-            self.toplevel.setting = setting
-            self.toplevel.title(setting)
-
-            # Entries
-            username_label = ttk.Label(self.toplevel, text="Username:",
-                                       font=MEDIUM_FONT)
-            username_label.grid(row=0, column=0, sticky="W", pady=5, padx=12)
-            self.toplevel.username = ttk.Entry(self.toplevel)
-            self.toplevel.username.grid(row=1, column=0, padx=15)
-
-            password_label = ttk.Label(self.toplevel, text="Password:",
-                                       font=MEDIUM_FONT)
-            password_label.grid(row=2, column=0, sticky="W", pady=5, padx=12)
-            self.toplevel.password = ttk.Entry(self.toplevel, show="*")
-            self.toplevel.password.grid(row=3, column=0, padx=15)
-
-            submit_command = (lambda: self.submit_button())
-            cancel_command = (lambda: VirtualWorld.remove_window(self))
-
-            # Buttons
-            self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
-                                              command=submit_command)
-            self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
-                                      padx=3)
-
-            self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
-                                              command=cancel_command)
-            self.toplevel.cancel.grid(row=6, column=0, sticky="E", pady=5)
-
-            # ERROR Labels
-            self.toplevel.user_info = ttk.Label(self.toplevel, text="",
-                                                font=MEDIUM_FONT)
-            self.toplevel.user_info.grid(row=8, column=0)
-            w = 157  # width for toplevel
-            h = 220  # height for toplevel
-
-            # get screen width and height
-            ws = self.toplevel.winfo_screenwidth()  # width of the screen
-            hs = self.toplevel.winfo_screenheight()  # height of the screen
-
-            # calculate x and y coordinates for the Tk root window
-            x = (ws / 2) - (w / 2)
-            y = (hs / 2) - (h / 2)
-
-            # set the dimensions of the screen and where it is placed
-            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
-            self.toplevel.mainloop()
 
 
 class LoginPage(tk.Frame):
@@ -535,7 +457,7 @@ class SettingsPage(tk.Frame):
         # Buttons
         name_change_link = "img/settings/change_name.gif"
         name_change_img = tk.PhotoImage(file=name_change_link)
-        name_window = (lambda: VirtualWorld.open_window(self, "Name"))
+        name_window = (lambda: self.open_window("Name"))
         name_change_button = tk.Button(self, relief="flat", width=120,
                                        height=30, image=name_change_img,
                                        command=name_window)
@@ -544,7 +466,7 @@ class SettingsPage(tk.Frame):
 
         pwd_change_link = "img/settings/change_password.gif"
         pwd_change_img = tk.PhotoImage(file=pwd_change_link)
-        pwd_window = (lambda: VirtualWorld.open_window(self, "Password"))
+        pwd_window = (lambda: self.open_window("Password"))
         pwd_change_button = tk.Button(self, relief="flat", width=120,
                                       height=30, image=pwd_change_img,
                                       command=pwd_window)
@@ -553,7 +475,7 @@ class SettingsPage(tk.Frame):
 
         age_change_link = "img/settings/change_age.gif"
         age_change_img = tk.PhotoImage(file=age_change_link)
-        age_window = (lambda: VirtualWorld.open_window(self, "Age"))
+        age_window = (lambda: self.open_window("Age"))
         age_change_button = tk.Button(self, relief="flat", width=120,
                                       height=30, image=age_change_img,
                                       command=age_window)
@@ -562,7 +484,7 @@ class SettingsPage(tk.Frame):
 
         del_user_link = "img/settings/delete_user.gif"
         del_user_img = tk.PhotoImage(file=del_user_link)
-        del_window = (lambda: VirtualWorld.open_window(self, "Delete"))
+        del_window = (lambda: self.open_window("Delete"))
         del_user_button = tk.Button(self, relief="flat", width=120, height=30,
                                     image=del_user_img, command=del_window)
         del_user_button.grid(row=21, column=1, columnspan=11)
@@ -579,12 +501,74 @@ class SettingsPage(tk.Frame):
         back_button.grid(row=22, column=10, columnspan=5, sticky="E")
         back_button.image = back_img
 
-    @staticmethod
-    def guest_user():
-        if 'Guest' in Check.file()['user_names']:
-            return True
-        else:
-            return False
+    def open_window(self, setting):
+        """ Username and Password window """
+        if self.toplevel is None:
+            current_user = Check.file()['current_user']
+            if 'Guest,None,50,1000000' in list(current_user):
+                print('Guest users cannot change their information!')
+                return False
+            else:
+                pass
+
+            self.toplevel = tk.Toplevel(self)
+            self.toplevel.protocol('WM_DELETE_WINDOW',
+                                   lambda: self.remove_window())
+            self.toplevel.focus_set()
+            self.toplevel.resizable(width=False, height=False)
+            self.toplevel.setting = setting
+            self.toplevel.title(setting)
+
+            # Entries
+            username_label = ttk.Label(self.toplevel, text="Username:",
+                                       font=MEDIUM_FONT)
+            username_label.grid(row=0, column=0, sticky="W", pady=5, padx=12)
+            self.toplevel.username = ttk.Entry(self.toplevel)
+            self.toplevel.username.grid(row=1, column=0, padx=15)
+
+            password_label = ttk.Label(self.toplevel, text="Password:",
+                                       font=MEDIUM_FONT)
+            password_label.grid(row=2, column=0, sticky="W", pady=5, padx=12)
+            self.toplevel.password = ttk.Entry(self.toplevel, show="*")
+            self.toplevel.password.grid(row=3, column=0, padx=15)
+
+            submit_command = (lambda: self.submit_button())
+            cancel_command = (lambda: self.remove_window())
+
+            # Buttons
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
+                                              command=submit_command)
+            self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
+                                      padx=3)
+
+            self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
+                                              command=cancel_command)
+            self.toplevel.cancel.grid(row=6, column=0, sticky="E", pady=5)
+
+            # ERROR Labels
+            self.toplevel.user_info = ttk.Label(self.toplevel, text="",
+                                                font=MEDIUM_FONT)
+            self.toplevel.user_info.grid(row=8, column=0)
+
+            w = 157  # width for toplevel
+            h = 220  # height for toplevel
+
+            # get screen width and height
+            ws = self.toplevel.winfo_screenwidth()  # width of the screen
+            hs = self.toplevel.winfo_screenheight()  # height of the screen
+
+            # calculate x and y coordinates for the Tk root window
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+
+            # set the dimensions of the screen and where it is placed
+            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
+            self.toplevel.mainloop()
+
+    def remove_window(self):
+        """ Removes Username and Password window """
+        self.toplevel.destroy()
+        self.toplevel = None
 
     def back_button(self):
         """ Go back to the Login page """
@@ -670,7 +654,7 @@ class SettingsPage(tk.Frame):
             old_name = self.toplevel.username.get()
             User.name_change(old_name, new_name)
 
-            success_label.after(2500, lambda: VirtualWorld.remove_window(self))
+            success_label.after(2500, lambda: self.remove_window())
 
         else:
             failure_label = ttk.Label(self.toplevel, text="Username Declined!",
@@ -688,7 +672,7 @@ class SettingsPage(tk.Frame):
             username = self.toplevel.username.get()
             User.password_change(username, new_password)
 
-            success_label.after(2500, lambda: VirtualWorld.remove_window(self))
+            success_label.after(2500, lambda: self.remove_window())
 
         else:
             failure_label = ttk.Label(self.toplevel, text="Password Declined!",
@@ -706,7 +690,7 @@ class SettingsPage(tk.Frame):
             username = self.toplevel.username.get()
             User.age_change(username, new_age)
 
-            success_label.after(2500, lambda: VirtualWorld.remove_window(self))
+            success_label.after(2500, lambda: self.remove_window())
 
         else:
             failure_label = ttk.Label(self.toplevel, text="Age Declined!",
@@ -792,6 +776,11 @@ class ShopPage(tk.Frame):
 
 
 class CoffeeShopPage(tk.Frame):
+    cappu_cost = 3.50
+    espre_cost = 3.00
+    flatw_cost = 2.50
+    latte_cost = 4.50
+    mocha_cost = 3.50
 
     def __init__(self, parent, controller):
         """ Coffee Shop where the user can buy different coffees """
@@ -825,154 +814,377 @@ class CoffeeShopPage(tk.Frame):
         back_button.grid(row=22, column=10, columnspan=5, sticky="E")
         back_button.image = back_img
 
-        # vcmd = (self.register(self.on_validate), '%P', '%S')
+        # Coffee type labels, prices and entries
 
-        test = self.register(self.on_validate)
-
-        # self.ZERO = tk.IntVar()
-        # self.ZERO.set(0)
-
-        # Cappuccino Label, price and amount
+        # Cappuccino label, price and amount entry
         self.cappuccino_label = ttk.Label(self, text="Cappuccino",
                                           font=MEDIUM_FONT)
-        self.cappuccino_label.grid(row=9, column=1, columnspan=4, pady=10,
+        self.cappuccino_label.grid(row=14, column=1, columnspan=5, pady=10,
                                    sticky="W")
-        self.cappuccino_price = ttk.Label(self, text="$4.50", font=MEDIUM_FONT)
-        self.cappuccino_price.grid(row=9, column=4, columnspan=3, pady=10)
+        self.cappuccino_price = ttk.Label(self, font=MEDIUM_FONT,
+                                          text="${:.2f}"
+                                          .format(self.cappu_cost))
+        self.cappuccino_price.grid(row=14, column=4, columnspan=3, pady=10)
+        cappuccino_vcmd = (self.register(self.confirm), '%P', '%S',
+                           'cappuccino')
         self.cappuccino_amount = ttk.Entry(self, validate="key",
-                                           validatecommand=(test, "%P", "%S"),
-                                           justify="center")
-        self.cappuccino_amount.grid(row=9, column=10, columnspan=2, pady=10)
+                                           justify="center",
+                                           validatecommand=cappuccino_vcmd)
+        self.cappuccino_amount.grid(row=14, column=10, columnspan=2, pady=10)
 
-        # Espresso Label, price and amount
+        # Espresso label, price and amount entry
         self.espresso_label = ttk.Label(self, text="Espresso",
                                         font=MEDIUM_FONT)
-        self.espresso_label.grid(row=10, column=1, columnspan=4, pady=10,
+        self.espresso_label.grid(row=15, column=1, columnspan=5, pady=10,
                                  sticky="W")
-        self.espresso_price = ttk.Label(self, text="$3.50", font=MEDIUM_FONT)
-        self.espresso_price.grid(row=10, column=4, columnspan=3, pady=10)
+        self.espresso_price = ttk.Label(self, font=MEDIUM_FONT,
+                                        text="${:.2f}".format(self.espre_cost))
+        self.espresso_price.grid(row=15, column=4, columnspan=3, pady=10)
+        espresso_vcmd = (self.register(self.confirm), '%P', '%S', 'espresso')
         self.espresso_amount = ttk.Entry(self, validate="key",
-                                         validatecommand=(test, "%P", "%S"),
-                                         justify="center")
-        self.espresso_amount.grid(row=10, column=10, columnspan=2, pady=10)
+                                         justify="center",
+                                         validatecommand=espresso_vcmd)
+        self.espresso_amount.grid(row=15, column=10, columnspan=2, pady=10)
 
-        # Flat white Label, price and amount
-        self.flat_white_label = ttk.Label(self, text="Flat white",
-                                          font=MEDIUM_FONT)
-        self.flat_white_label.grid(row=11, column=1, columnspan=4, pady=10,
-                                   sticky="W")
-        self.flat_white_price = ttk.Label(self, text="$3.50", font=MEDIUM_FONT)
-        self.flat_white_price.grid(row=11, column=4, columnspan=3, pady=10)
-        self.flat_white_amount = ttk.Entry(self, validate="key",
-                                           validatecommand=(test, "%P", "%S"),
-                                           justify="center")
-        self.flat_white_amount.grid(row=11, column=10, columnspan=2, pady=10)
+        # Flat white label, price and amount entry
+        self.flat_w_label = ttk.Label(self, text="Flat White",
+                                      font=MEDIUM_FONT)
+        self.flat_w_label.grid(row=16, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.flat_w_price = ttk.Label(self, font=MEDIUM_FONT,
+                                      text="${:.2f}".format(self.flatw_cost))
+        self.flat_w_price.grid(row=16, column=4, columnspan=3, pady=10)
+        flat_w_vcmd = (self.register(self.confirm), '%P', '%S', 'flat_white')
+        self.flat_w_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=flat_w_vcmd)
+        self.flat_w_amount.grid(row=16, column=10, columnspan=2, pady=10)
 
-        # Latte Label, price and amount
+        # Latte label, price and amount entry
         self.latte_label = ttk.Label(self, text="Latte", font=MEDIUM_FONT)
-        self.latte_label.grid(row=12, column=1, columnspan=4, pady=10,
+        self.latte_label.grid(row=17, column=1, columnspan=5, pady=10,
                               sticky="W")
-        self.latte_price = ttk.Label(self, text="$4.50", font=MEDIUM_FONT)
-        self.latte_price.grid(row=12, column=4, columnspan=3, pady=10)
-        self.latte_amount = ttk.Entry(self, validate="key",
-                                      validatecommand=(test, "%P", "%S"),
-                                      justify="center")
-        self.latte_amount.grid(row=12, column=10, columnspan=2, pady=10)
+        self.latte_price = ttk.Label(self, font=MEDIUM_FONT,
+                                     text="${:.2f}".format(self.latte_cost))
+        self.latte_price.grid(row=17, column=4, columnspan=3, pady=10)
+        latte_vcmd = (self.register(self.confirm), '%P', '%S', 'latte')
+        self.latte_amount = ttk.Entry(self, validate="key", justify="center",
+                                      validatecommand=latte_vcmd)
+        self.latte_amount.grid(row=17, column=10, columnspan=2, pady=10)
 
-        # Mocha Label, price and amount
+        # Mocha label, price and amount entry
         self.mocha_label = ttk.Label(self, text="Mocha", font=MEDIUM_FONT)
-        self.mocha_label.grid(row=13, column=1, columnspan=4, pady=10,
+        self.mocha_label.grid(row=18, column=1, columnspan=5, pady=10,
                               sticky="W")
-        self.mocha_price = ttk.Label(self, text="$4.50", font=MEDIUM_FONT)
-        self.mocha_price.grid(row=13, column=4, columnspan=3, pady=10)
-        self.mocha_amount = ttk.Entry(self, validate="key",
-                                      validatecommand=(test, "%P", "%S"),
-                                      justify="center")
-        self.mocha_amount.grid(row=13, column=10, columnspan=2, pady=10)
+        self.mocha_price = ttk.Label(self, font=MEDIUM_FONT,
+                                     text="${:.2f}".format(self.mocha_cost))
+        self.mocha_price.grid(row=18, column=4, columnspan=3, pady=10)
+        mocha_vcmd = (self.register(self.confirm), '%P', '%S', 'mocha')
+        self.mocha_amount = ttk.Entry(self, validate="key", justify="center",
+                                      validatecommand=mocha_vcmd)
+        self.mocha_amount.grid(row=18, column=10, columnspan=2, pady=10)
+
+        # Maximum number of coffees
+        self.amount_label = ttk.Label(self, font=SMALL_FONT, foreground="red",
+                                      text="Maximum of 9 of each coffee type.")
+        self.amount_label.grid(row=19, column=1, columnspan=9)
 
         # Total
-        menu_label = ttk.Label(self, text="Total:", font=MEDIUM_FONT)
-        menu_label.grid(row=14, column=1, pady=32, sticky="W")
-        self.total_label = ttk.Label(self, text="$0.00", font=MEDIUM_FONT)
-        self.total_label.grid(row=14, column=1, columnspan=6, pady=32,
-                              padx=10, sticky="E")
+        total_label = ttk.Label(self, text="Total:", font=MEDIUM_FONT)
+        total_label.grid(row=20, column=1, sticky="W")
+        self.total_cost_label = ttk.Label(self, font=MEDIUM_FONT,
+                                          text="$0.00")
+        self.total_cost_label.grid(row=20, column=1, columnspan=6,
+                                   padx=10, sticky="E")
 
         self.toplevel = None
 
+        # Buttons
+
+        # Erase button
+        self.erase_button = ttk.Button(self, text="Erase all",
+                                       command=lambda: self.erase())
+        self.erase_button.grid(row=19, column=9, columnspan=4, pady=5)
+
         # Purchase Button
-        buy_img = tk.PhotoImage(file="img/shops/purchase_button.gif")
-        buy_window = (lambda: VirtualWorld.open_window(self, "Purchase"))
-        buy_button = tk.Button(self, compound=tk.TOP, relief="flat",
-                               width=80, height=40, image=buy_img,
-                               command=buy_window, state='disabled')
-        buy_button.grid(row=14, column=7, columnspan=6, sticky="E",
-                        padx=20, pady=5)
-        buy_button.image = buy_img
+        self.buy_img = tk.PhotoImage(file="img/shops/purchase_button.gif")
+        buy_window = (lambda: self.order())
+        self.buy_button = tk.Button(self, compound=tk.TOP, relief="flat",
+                                    width=80, height=40, image=self.buy_img,
+                                    command=buy_window, state='disabled')
+        self.buy_button.grid(row=20, column=7, columnspan=6, sticky="E",
+                             pady=5)
+        self.buy_button.image = self.buy_img
+
+        CoffeeShopPage.reset_order_data()
+
+    def erase(self):
+        """
+        Removes all data from the entries.
+        """
+        for amount in (self.cappuccino_amount, self.espresso_amount,
+                       self.flat_w_amount, self.latte_amount,
+                       self.mocha_amount):
+            amount.delete(0, 1)
+            amount.insert(0, "")
+
+    def confirm(self, P, S, _type):
+        """
+        Only allow a 1 digit integer and if the total of all the entries
+        is greater than one, enable the cart button.
+
+        :param P: allowed value (%P)
+        :param S: text being inserted (%S)
+        :param _type: the coffee type (str)
+        :return: True or False
+        """
+        allowed_value = P  # So the values of P and S are understandable
+        inserted_value = S  # But are set as param so that %P and %S are used.
+
+        if len(allowed_value) == 0:
+            inserted_value = 0
+            allowed_value = "0"
+        else:
+            try:
+                inserted_value = int(inserted_value)
+            except ValueError:
+                print("Input is not an integer!")
+        if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
+            with open(COFFEE_DATA_F, 'r') as file:
+                current_data = [line.strip() for line in file]
+            data = {}
+            with open(COFFEE_DATA_F, 'r') as file:
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+            if data[_type] == str(allowed_value):
+                print("No changes to be made to {}".format(COFFEE_DATA_F))
+            else:
+                current_data.remove('{}:{}'.format(_type, data[_type]))
+                current_data.remove('{}:{}'.format('total', data['total']))
+                data[_type] = int(allowed_value)
+                data['total'] = 0
+                total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    item.pop(0)
+                    total += int(item[0])
+                data['total'] = total + data[_type]
+                current_data.append('{}:{}'.format(_type, data[_type]))
+                current_data.append('{}:{}'.format('total', data['total']))
+
+                cappuccino_total = 0
+                espresso_total = 0
+                flat_w_total = 0
+                latte_total = 0
+                mocha_total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    if item[0] == 'cappuccino' and int(item[1]) > 0:
+                        cappuccino_total = int(item[1]) * self.cappu_cost
+                    elif item[0] == 'espresso' and int(item[1]) > 0:
+                        espresso_total = int(item[1]) * self.espre_cost
+                    elif item[0] == 'flat_white' and int(item[1]) > 0:
+                        flat_w_total = int(item[1]) * self.flatw_cost
+                    elif item[0] == 'latte' and int(item[1]) > 0:
+                        latte_total = int(item[1]) * self.latte_cost
+                    elif item[0] == 'mocha' and int(item[1]) > 0:
+                        mocha_total = int(item[1]) * self.mocha_cost
+                new_total = cappuccino_total + espresso_total + \
+                    flat_w_total + latte_total + mocha_total
+
+            if int(data['total']) > 0:
+                self.total_cost_label.configure(text="${:.2f}"
+                                                .format(new_total))
+                self.buy_button.configure(state='normal')
+            else:
+                self.total_cost_label.configure(text="$0.00")
+                self.buy_button.configure(state='disabled')
+            with open(COFFEE_DATA_F, 'w') as file:
+                print("Writing new data to {}".format(COFFEE_DATA_F))
+                file.write('\n'.join(current_data))
+            return True
+        else:
+            self.bell()
+            return False
 
     def back_button(self):
         """ Go back to the Login page """
         self.controller.show_frame(ShopPage)
 
-    def on_validate(self, P, S):
-        # Only allow between 0 and 3 coffees
-        self.maximum_amount = tk.Label(self, text="", fg="red")
-        self.maximum_amount.grid(row=9, column=12)
-        try:
-            S = int(S)
-            if S <= 3 and len(P) < 2:
-                print("I worked!")
-                self.bind("<Button-1>", self.total_amount(S))
-                self.maximum_amount.grid_remove()  # .configure(text="")
-                return True
-            else:
-                self.maximum_amount.configure(text="3 Max")
-                return False
-        except:
-            return False
-
-    def total(self, P, S):
-        self.on_validate(P, S)
-        self.total_amount()
-
-    def total_amount(self, S):
-        print("I WORKED!")
-        cappuccino_amount = S  # self.cappuccino_amount.get()
-        print(cappuccino_amount)
-        try:
-            cappuccino_amount = int(cappuccino_amount)
-        except:
-            print("False")
-            return False
-        cappuccino_total = cappuccino_amount * 3.5
-        # espresso_amount = self.espresso_amount.get()
-        # espresso_total = int(espresso_amount) * 3.5
-
-        total = cappuccino_total  # + espresso_total
-        print(total)
-        self.total_label.configure(text="${:.2f}".format(total))
-
     def submit_button(self):
-        username = self.toplevel.username.get()
-        password = self.toplevel.password.get()
+        try:
+            username = self.toplevel.username.get()
+            password = self.toplevel.password.get()
+        except AttributeError:
+            username = "Guest"
+            password = "None"
+
         name_and_pass = username + ',' + password
-        print(name_and_pass)
+        amount = float(self.total_cost_label.cget("text").strip('$'))
         if name_and_pass == ',':
-            print("I did not work")
-            self.toplevel.userinfo.configure(text="Nothing entered!",
-                                             foreground="red")
+            print("Nothing was entered!")
+            self.toplevel.user_info.configure(text="Nothing entered!",
+                                              foreground="red")
             return False
         elif Check.in_user_data(Check.all_user_data(name_and_pass)):
             print("User '{}' Exists!".format(username))
-            if self.toplevel.setting == "Purchase":
-                self.toplevel.submit = ttk.Button(self.toplevel,
-                                                  text="Confirm")
-                self.toplevel.submit.grid(row=6, column=0, sticky="W",
-                                          pady=5, padx=3)
-            else:
-                print("ERROR - else statement in submit_button")
+            self.toplevel.user_info.configure(text="")
+            purchase = (lambda: self.purchase(username, amount))
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Confirm",
+                                              command=purchase)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
         else:
-            print("I did not work")
+            self.toplevel.error_label = ttk.Label(
+                self.toplevel, text="Incorrect username/password",
+                foreground="red")
+            self.toplevel.error_label.grid(row=14, column=9, columnspan=20)
             return False
+
+    def purchase(self, username, amount):
+        if username == 'Guest':
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            CoffeeShopPage.reset_order_data()
+        elif User.withdraw(username, amount) is True:
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            CoffeeShopPage.reset_order_data()
+        elif User.withdraw(username, amount) == "insufficient_funds":
+            self.toplevel.user_info.configure(text="Insufficient funds",
+                                              foreground="red")
+        else:
+            self.toplevel.user_info.configure(text="Transaction failed",
+                                              foreground="red")
+        self.toplevel.user_info.after(2500, lambda: self.remove_window())
+
+    @staticmethod
+    def reset_order_data():
+        """ Resets the COFFEE_DATA_F file. """
+        order_data = ['cappuccino', 'espresso', 'flat_white', 'latte', 'mocha',
+                      'total']
+        new_data = []
+        with open(COFFEE_DATA_F, 'w') as file:
+            for data in order_data:
+                new_data.append('{}:0'.format(data))
+            file.write('\n'.join(new_data))
+
+    def order(self):
+        if self.toplevel is None:
+            self.toplevel = tk.Toplevel(self)
+            self.toplevel.protocol('WM_DELETE_WINDOW',
+                                   lambda: self.remove_window())
+            self.toplevel.focus_set()
+            self.toplevel.resizable(width=False, height=False)
+            self.toplevel.title('Order')
+
+            order_label = ttk.Label(self.toplevel, text="Here is your order:",
+                                    font=MEDIUM_FONT)
+            order_label.grid(row=0, column=0, columnspan=20, padx=5, pady=5)
+            type_label = ttk.Label(self.toplevel, text="Type", font=SMALL_FONT)
+            type_label.grid(row=2, column=0, columnspan=10, pady=10, padx=5)
+            price_label = ttk.Label(self.toplevel, text="Amount",
+                                    font=SMALL_FONT)
+            price_label.grid(row=2, column=10, columnspan=9, pady=10)
+            amount_label = ttk.Label(self.toplevel, text="Price",
+                                     font=SMALL_FONT)
+            amount_label.grid(row=2, column=20, pady=10)
+
+            data = {}
+            with open(COFFEE_DATA_F, 'r') as file:
+                count = 2
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+                    if int(data[option]) > 0:
+                        if option == 'flat_white':
+                            coffee_type = 'Flat White'
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.flatw_cost)
+                        elif option == 'cappuccino':
+                            coffee_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.cappu_cost)
+                        elif option == 'espresso':
+                            coffee_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.espre_cost)
+                        elif option == 'latte':
+                            coffee_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.latte_cost)
+                        elif option == 'mocha':
+                            coffee_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.mocha_cost)
+                        elif option == 'total':
+                            coffee_type = option.title()
+                            price = self.total_cost_label.cget("text")
+                        else:
+                            coffee_type = option
+                            price = ""
+
+                        count += 1
+                        ttk.Label(self.toplevel, text=coffee_type)\
+                            .grid(row=count, column=0, columnspan=10)
+                        ttk.Label(self.toplevel, text=data[option])\
+                            .grid(row=count, column=10, columnspan=9)
+                        ttk.Label(self.toplevel, text=price)\
+                            .grid(row=count, column=20)
+
+            with open(current_user_file, 'r') as file:
+                if 'Guest,None,50,1000000' not in file:
+                    # Entries
+                    username_label = ttk.Label(self.toplevel, text="Username:",
+                                               font=SMALL_FONT)
+                    username_label.grid(row=9, column=7, columnspan=11, pady=5)
+                    self.toplevel.username = ttk.Entry(self.toplevel)
+                    self.toplevel.username.grid(row=10, sticky='W', padx=20,
+                                                column=9, columnspan=12)
+
+                    password_label = ttk.Label(self.toplevel, text="Password:",
+                                               font=SMALL_FONT)
+                    password_label.grid(row=11, column=7, columnspan=11,
+                                        pady=5)
+                    self.toplevel.password = ttk.Entry(self.toplevel, show="*")
+                    self.toplevel.password.grid(row=12, sticky="E", padx=20,
+                                                column=9, columnspan=12)
+
+            submit_command = (lambda: self.submit_button())
+            cancel_command = (lambda: self.remove_window())
+
+            # Buttons
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
+                                              command=submit_command)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
+
+            self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
+                                              command=cancel_command)
+            self.toplevel.cancel.grid(row=13, column=16, columnspan=6, pady=5)
+
+            # ERROR Labels
+            self.toplevel.user_info = ttk.Label(self.toplevel, text="",
+                                                font=SMALL_FONT)
+            self.toplevel.user_info.grid(row=14, column=8, columnspan=20)
+
+            w = 250  # width for toplevel
+            h = 335  # height for toplevel
+
+            # get screen width and height
+            ws = self.toplevel.winfo_screenwidth()  # width of the screen
+            hs = self.toplevel.winfo_screenheight()  # height of the screen
+
+            # calculate x and y coordinates for the Tk root window
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+
+            # set the dimensions of the screen and where it is placed
+            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
+            self.toplevel.mainloop()
+
+    def remove_window(self):
+        """ Removes Username and Password window """
+        self.toplevel.destroy()
+        self.toplevel = None
 
 
 class Check:
@@ -1068,7 +1280,7 @@ class Check:
             age = User.get_data(username)['age']
             balance = User.get_data(username)['balance']
             return user_info + ',' + age + ',' + balance
-        except:
+        except KeyError:
             return None
 
     @staticmethod
@@ -1144,8 +1356,7 @@ class User:
     @staticmethod
     def get_current():
         with open(current_user_file, 'r') as file:
-            for line in file:
-                user, pwd, age, balance = line.strip().split(',')
+            user, pwd, age, balance = file.readline().split(',')
         return {"username": user, "password": pwd,
                 "age": age, "balance": balance}
 
@@ -1237,6 +1448,12 @@ class User:
 
     @staticmethod
     def delete(username):
+        """
+        Delete a user from the user data.
+
+        :param username: str
+        :return: None
+        """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         age = User.get_data(username)['age']
@@ -1254,6 +1471,33 @@ class User:
         user_names.remove(username)
         with open(user_names_file, 'w') as f:
             f.write('\n'.join(user_names))
+
+    @staticmethod
+    def withdraw(username, amount):
+        """ Withdraws money from the user's current balance. """
+        user_balance = User.get_data(username)['balance']
+        if float(user_balance) >= amount:
+            user_data = list(Check.file()['user_data'])
+            password = User.get_data(username)['password']
+            age = User.get_data(username)['age']
+            print("Withdrawing {} from {}".format(amount, username))
+            del_user = username + ',' + password + ',' + age + ',' + \
+                user_balance
+            user_data.remove(del_user)
+
+            new_balance = str(float(user_balance) - amount)
+
+            new_user = username + ',' + password + ',' + age + ',' + \
+                new_balance
+            user_data.append(new_user)
+
+            with open(user_data_file, 'w') as f:
+                f.write('\n'.join(user_data))
+            return True
+        elif int(user_balance) < amount:
+            return "insufficient_funds"
+        else:
+            return False
 
 
 class Options:
