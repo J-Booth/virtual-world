@@ -1191,67 +1191,79 @@ class Check:
 
     @staticmethod
     def file():
-        """ Check files exist and returns data within them:
-            'user_names' - for user_names.txt
-            'user_data' - for user_data.txt
-            'current_user' - for current_user.txt
-            'options' - for options.txt
+        """ 
+        Check files exist and returns data within them:
+
+        'user_names' - for user_names.txt
+        'user_data' - for user_data.txt
+        'current_user' - for current_user.txt
+        'options' - for options.txt
         """
 
         def options():
-            """ Check options.txt exists and it is created
-                if it does not exist.
+            """ 
+            Check options.txt exists and it is created if it does not exist.
             """
             try:
-                with open(options_file, 'r') as f:
-                    option_data = [line.strip() for line in f]
+                with open(options_file, 'r') as file:
+                    print("Opening the options file '{}'.".format(
+                          options_file))
             except FileNotFoundError:
                 print("Failed to open the 'options.txt' file")
-                with open(options_file, 'w'):
+                with open(options_file, 'w') as file:
                     print("Creating options.txt...")
-                    option_data = []
+                    file.write("running:False\ntimes_opened:0")
+            option_data = [line.strip() for line in file]
             return option_data
 
         def user_names():
-            """ Check user_names.txt exists and it is created
-                if it does not exist. Returns name_data as list.
+            """ 
+            Check user_names.txt exists and it is created if it does not exist. 
+            Returns name_data as list.
             """
             try:
-                with open(user_names_file, 'r') as f:
-                    name_data = [line.strip() for line in f]
+                with open(user_names_file, 'r') as file:
+                    print("Opening the user_names_file '{}'.".format(
+                          user_names_file))
             except FileNotFoundError:
-                print("Failed to open the 'user_names.txt' file")
-                with open(user_names_file, 'w'):
-                    print("Creating user_names.txt...")
-                    name_data = []
+                print("Failed to open '{}'.".format(user_names_file))
+                with open(user_names_file, 'w') as file:
+                    print("Creating '{}'...".format(user_names_file))
+                    file.write("Guest")
+            name_data = [line.strip() for line in file]
             return name_data
 
         def user_data():
-            """ Check user_data.txt exists and it is created
-                if it does not exist.
+            """ 
+            Check user_data.txt exists and it is created if it does not exist.
             """
             try:
-                with open(user_data_file, 'r') as f:
-                    _all_data = [line.strip() for line in f]
+                with open(user_data_file, 'r') as file:
+                    print("Opening the user_data_file '{}'.".format(
+                          user_data_file))
             except FileNotFoundError:
-                print("Failed to open the 'user_data.txt' file")
-                with open(user_data_file, 'w'):
-                    print("Creating user_data.txt...")
-                    _all_data = []
+                print("Failed to open '{}'.".format(user_data_file))
+                with open(user_data_file, 'w') as file:
+                    print("Creating '{}'...".format(user_data_file))
+                    file.write("Guest,None,50,1000000")
+            _all_data = [line.strip() for line in file]
             return _all_data
 
         def current_user():
-            """ Check current_user.txt exists and it is created
-                if it does not exist.
+            """ 
+            Check current_user.txt exists and it is created if it 
+            does not exist.
             """
             try:
-                with open(current_user_file, 'r') as f:
-                    current_user_data = [line.strip() for line in f]
+                with open(current_user_file, 'r') as file:
+                    print("Opening the current_user_file '{}'.".format(
+                          current_user_file))
             except FileNotFoundError:
-                print("Failed to open the 'current_user.txt' file")
-                with open(current_user_file, 'w'):
-                    print("Creating current_user.txt...")
-                    current_user_data = []
+                print("Failed to open '{}'".format(current_user_file))
+                with open(current_user_file, 'w') as file:
+                    print("Creating '{}'...".format(current_user_file))
+                    file.write("Guest,None,50,1000000")
+            current_user_data = [line.strip() for line in file]
             return current_user_data
 
         return {"options": options(), "user_names": user_names(),
@@ -1259,7 +1271,9 @@ class Check:
 
     @staticmethod
     def in_user_data(user):
-        """ Check if user's info is in user_data.txt """
+        """
+        Check if user's info is in user_data.txt
+        """
         with open(user_data_file, 'r') as file:
             if user is None:
                 return False
