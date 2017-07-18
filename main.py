@@ -42,7 +42,7 @@ class VirtualWorld(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for file in (UserPage, LoginPage, SignUp, SettingsPage, ShopPage,
+        for file in (UserPage, LoginPage, SignupPage, SettingsPage, ShopPage,
                      CoffeeShopPage):
             frame = file(container, self)
             self.frames[file] = frame
@@ -219,7 +219,7 @@ class LoginPage(tk.Frame):
 
         # Buttons
         self.signup_img = tk.PhotoImage(file="img/menu/signup_button.gif")
-        signup_command = (lambda: controller.show_frame(SignUp))
+        signup_command = (lambda: controller.show_frame(SignupPage))
         self.signup_button = tk.Button(self, compound=tk.TOP, relief="flat",
                                        width=80, height=40,
                                        image=self.signup_img,
@@ -288,7 +288,7 @@ class LoginPage(tk.Frame):
         self.controller.show_frame(UserPage)
 
 
-class SignUp(tk.Frame):
+class SignupPage(tk.Frame):
     def __init__(self, parent, controller):
         """ Signup frame of Virtual World. """
         tk.Frame.__init__(self, parent)
