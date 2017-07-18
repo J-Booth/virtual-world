@@ -31,7 +31,7 @@ from __init__ import *
 class VirtualWorld(tk.Tk):
 
     def __init__(self, *args, **kwargs):
-        """ Main body of the Virtual World Game """
+        """ Setup of the Virtual World Game """
         tk.Tk.__init__(self, *args, **kwargs)
 
         tk.Tk.iconbitmap(self, default="img/virtualworld_logo.ico")
@@ -42,7 +42,7 @@ class VirtualWorld(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for file in (UserPage, LoginPage, SignUp, SettingsPage, ShopPage,
+        for file in (UserPage, LoginPage, SignupPage, SettingsPage, ShopPage,
                      CoffeeShopPage):
             frame = file(container, self)
             self.frames[file] = frame
@@ -52,7 +52,7 @@ class VirtualWorld(tk.Tk):
         self.init_window()
 
     def init_window(self):
-        """ Menu creation """
+        """ Create the upper Menu bar (for all frames). """
         _menu = tk.Menu(self.master)
         self.config(menu=_menu)
 
@@ -74,16 +74,17 @@ class VirtualWorld(tk.Tk):
         _menu.add_cascade(label="Help", menu=help_menu)
 
     def show_frame(self, cont):
-        """ Bring frame to the user's view"""
+        """ Bring frame to the user's view. """
         frame = self.frames[cont]
         frame.tkraise()
 
     def hide_frame(self, cont):
+        """ Send frame away from the user's view. """
         frame = self.frames[cont]
         frame.lower()
 
     def menu_bar(self, controller):
-        """ Menu bar creation """
+        """ Create the lower Menu bar (for most frames). """
         data = {}
         with open(current_user_file, 'r') as file:
             for line in file:
@@ -98,7 +99,11 @@ class VirtualWorld(tk.Tk):
                                   font=MEDIUM_FONT)
 
         def current_user():
-            """ Get the current user """
+            """
+            Get the current user's name and balance.
+
+            :returns: a dict with 'username' and 'balance' as keys.
+            """
             nonlocal username
             username = User.get_current()['username']
             newest_balance = User.get_current()['balance']
@@ -106,7 +111,11 @@ class VirtualWorld(tk.Tk):
             return {"username": username, "balance": newest_balance}
 
         def toggle_entry():
-            """ Balance button toggling """
+            """
+            Toggle balance button.
+
+            :raise: ValueError: Balance not valid!
+            """
             nonlocal hidden
             newest_balance = current_user()["balance"]
             if self.balance == newest_balance:
@@ -163,10 +172,11 @@ class VirtualWorld(tk.Tk):
         back_button.image = back_img
 
     def back_button(self):
+        """ Raise the UserPage frame to the user's view. """
         self.controller.show_frame(UserPage)
 
     def logout(self):
-        """ Appending current_user.txt with a guest user """
+        """ Append current_user_file with a guest user then show LoginPage. """
         user = "Guest" + ',' + "None" + ',' + "50" + ',' + "1000000"
         with open(current_user_file, 'w') as f:
             f.write(user)
@@ -176,7 +186,7 @@ class VirtualWorld(tk.Tk):
 class LoginPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Where the user can login to Virtual World """
+        """ Login frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -209,7 +219,7 @@ class LoginPage(tk.Frame):
 
         # Buttons
         self.signup_img = tk.PhotoImage(file="img/menu/signup_button.gif")
-        signup_command = (lambda: controller.show_frame(SignUp))
+        signup_command = (lambda: controller.show_frame(SignupPage))
         self.signup_button = tk.Button(self, compound=tk.TOP, relief="flat",
                                        width=80, height=40,
                                        image=self.signup_img,
@@ -236,7 +246,11 @@ class LoginPage(tk.Frame):
         guest_button.image = guest_img
 
     def sign_in_button(self):
-        """ Check user's info and sign them in """
+        """
+        Check user's info and sign them in.
+
+        :return: False - If user does not exist.
+        """
         username = self.username.get()
         password = self.password.get()
         name_and_pass = username + ',' + password
@@ -267,16 +281,16 @@ class LoginPage(tk.Frame):
             return False
 
     def guest_button(self):
-        """" Takes the user (without a login) to the user homepage """
+        """" Take the user (without a login) to the user homepage. """
         print('guest button')
         with open(current_user_file, 'w') as f:
             f.write('Guest,None,50,1000000')
         self.controller.show_frame(UserPage)
 
 
-class SignUp(tk.Frame):
+class SignupPage(tk.Frame):
     def __init__(self, parent, controller):
-        """ A user can signup to Virtual World and have their info saved """
+        """ Signup frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -332,12 +346,14 @@ class SignUp(tk.Frame):
         submit_button.image = submit_img
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Raise the LoginPage frame to the user's view. """
         self.controller.show_frame(LoginPage)
 
     def create_user(self, username, password, age):
-        """ Adds the user to the text file, shows a success message then
-            returns the user back to the login page. """
+        """
+        Adds the user to the text file, shows a success message, then returns
+        the user back to the LoginPage frame.
+        """
         User.new(username, password, age)
         self.name_error_label.configure(text="")  # ttk label
         self.pwd_error_label.configure(text="", )  # ttk label
@@ -345,7 +361,7 @@ class SignUp(tk.Frame):
         self.age_error_label.after(2500, self.back_button)
 
     def submit_button(self):
-        """ Check user input then output a success/fail message """
+        """ Check user input then output a success/fail message. """
         if Check.username(self.username.get()):
             username = self.username.get()
             if Check.password(self.password.get()):
@@ -373,7 +389,7 @@ class SignUp(tk.Frame):
 class UserPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ User's Homepage """
+        """ User's homepage frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -418,18 +434,19 @@ class UserPage(tk.Frame):
         back_button.image = back_img
 
     def shops_button(self):
+        """ Raise the ShopPage frame to the user's view. """
         self.controller.show_frame(ShopPage)
 
     def games_button(self):
-        # self.controller.show_frame(GamePage)
+        """ Raise the GamePage frame to the user's view. """
         pass
 
     def tasks_button(self):
-        # self.controller.show_frame(TaskPage)
+        """ Raise the TaskPage frame to the user's view. """
         pass
 
     def back_button(self):
-        """ Appending current_user.txt with a guest user """
+        """ Append current_user_file with a guest user then show LoginPage. """
         user = "Guest,None,50,1000000"
         with open(current_user_file, 'w') as f:
             f.write(user)
@@ -439,7 +456,7 @@ class UserPage(tk.Frame):
 class SettingsPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ For the user to change their settings """
+        """ Settings frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -501,7 +518,12 @@ class SettingsPage(tk.Frame):
         back_button.image = back_img
 
     def open_window(self, setting):
-        """ Username and Password window """
+        """
+        Create a Username and Password window for verifying user information
+        for changing settings, and provide a Toplevel for entries to be added.
+
+        :return: False - If current user is a guest.
+        """
         if self.toplevel is None:
             current_user = Check.file()['current_user']
             if 'Guest,None,50,1000000' in list(current_user):
@@ -565,17 +587,22 @@ class SettingsPage(tk.Frame):
             self.toplevel.mainloop()
 
     def remove_window(self):
-        """ Removes Username and Password window """
+        """ Remove the toplevel (username and password) window. """
         self.toplevel.destroy()
         self.toplevel = None
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Remove the SettingsPage frame from the user's view. """
         self.controller.hide_frame(SettingsPage)
 
     def submit_button(self):
-        """ Check user input and change the setting window
-            for the specified setting """
+        """
+        Check user input and change the setting window for the specified
+        setting.
+
+        :return: False - If user data is incorrect or if there is no data.
+        :raise: NameError: Setting name is invalid!
+        """
         username = self.toplevel.username.get()
         password = self.toplevel.password.get()
         user_info = username + ',' + password
@@ -643,43 +670,54 @@ class SettingsPage(tk.Frame):
             return False
 
     def change_name(self, new_name):
-        """ Check name and either change or reject name """
+        """
+        Change the user's name if the new name is valid, decline the username
+        if is taken.
+
+        :param new_name: This is user's new name (str).
+        """
         if Check.username(new_name):
             success_label = ttk.Label(self.toplevel, text="Username Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-            print("Changing username...")
             old_name = self.toplevel.username.get()
+            print("Changing username...")
             User.name_change(old_name, new_name)
-
             success_label.after(2500, lambda: self.remove_window())
-
         else:
             failure_label = ttk.Label(self.toplevel, text="Username Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def change_password(self, new_password):
-        """ Check password and either change or reject password """
+        """
+        Change the user's password if the new password is valid, decline the
+        password if it is invalid.
+
+        :param new_password: This is user's new password (str).
+        """
         if Check.password(new_password):
             success_label = ttk.Label(self.toplevel, text="Password Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-            print("Changing password...")
             username = self.toplevel.username.get()
+            print("Changing password...")
             User.password_change(username, new_password)
-
             success_label.after(2500, lambda: self.remove_window())
-
         else:
             failure_label = ttk.Label(self.toplevel, text="Password Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def change_age(self, new_age):
-        """ Check age and either change or reject age """
+        """
+        Change the user's age if the new age is valid, decline the
+        age if it is below 10 and over 999.
+
+        :param new_age: This is user's new age (str).
+        """
         if Check.age(new_age):
             success_label = ttk.Label(self.toplevel, text="Age Accepted!",
                                       foreground="green")
@@ -697,27 +735,33 @@ class SettingsPage(tk.Frame):
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def delete_user(self, username):
-        """ Delete the user """
+        """
+        Delete the given user.
+
+        :param username: This is user's login name (str).
+        """
         success_label = ttk.Label(self.toplevel, text="Deleting user...",
                                   foreground="green")
         success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
         print("Deleting user...")
         User.delete(username)
-        del_window = (lambda: self.remove_window_del(self.controller))
+        del_window = (lambda: self.remove_window_del())
         success_label.after(2500, del_window)
 
-    def remove_window_del(self, controller):
-        """ Destroy the window and sign out the current user """
+    def remove_window_del(self):
+        """
+        Destroy the window and bring the LoginPage frame to the user's view.
+        """
         self.toplevel.destroy()
         self.toplevel = None
-        controller.show_frame(LoginPage)
+        self.controller.show_frame(LoginPage)
 
 
 class ShopPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Display a list of shops the user can visit """
+        """ Shops frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -757,19 +801,23 @@ class ShopPage(tk.Frame):
         VirtualWorld.menu_bar(self, controller)
 
     def back_button(self):
+        """ Raise the UserPage frame to the user's view. """
         self.controller.show_frame(UserPage)
 
     def shop_coffee(self):
+        """ Raise the CoffeeShopPage frame to the user's view. """
         self.controller.show_frame(CoffeeShopPage)
 
     # def shop_tech(self):
+    # """ Raise the TechShopPage frame to the user's view. """
     #     self.controller.show_frame(TechShopPage)
     #
     # def shop_pizza(self):
+    # """ Raise the PizzaShopPage frame to the user's view. """
     #     self.controller.show_frame(PizzaShopPage)
 
     def balance_button(self):
-        # To be finished
+        # TODO: Fix this.
         # print("Balance: ${:.2f}".format(user.balance))
         pass
 
@@ -782,7 +830,7 @@ class CoffeeShopPage(tk.Frame):
     mocha_cost = 3.50
 
     def __init__(self, parent, controller):
-        """ Coffee Shop where the user can buy different coffees """
+        """ Coffee shop frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -917,9 +965,7 @@ class CoffeeShopPage(tk.Frame):
         CoffeeShopPage.reset_order_data()
 
     def erase(self):
-        """
-        Removes all data from the entries.
-        """
+        """ Remove all data from the order entries. """
         for amount in (self.cappuccino_amount, self.espresso_amount,
                        self.flat_w_amount, self.latte_amount,
                        self.mocha_amount):
@@ -931,10 +977,11 @@ class CoffeeShopPage(tk.Frame):
         Only allow a 1 digit integer and if the total of all the entries
         is greater than one, enable the cart button.
 
-        :param P: allowed value (%P)
-        :param S: text being inserted (%S)
-        :param _type: the coffee type (str)
-        :return: True or False
+        :param P: allowed value (%P).
+        :param S: text being inserted (%S).
+        :param _type: the coffee type (str).
+        :returns: True - If value is valid.
+                 False - If input is invalid.
         """
         allowed_value = P  # So the values of P and S are understandable
         inserted_value = S  # But are set as param so that %P and %S are used.
@@ -1007,10 +1054,16 @@ class CoffeeShopPage(tk.Frame):
             return False
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Raise the ShopPage frame to the user's view. """
         self.controller.show_frame(ShopPage)
 
     def submit_button(self):
+        """
+        Check user input and change the order window for the specified
+        user, where guests do not pay but all other users do.
+
+        :return: False - If user data is incorrect or if there is no data.
+        """
         try:
             username = self.toplevel.username.get()
             password = self.toplevel.password.get()
@@ -1040,6 +1093,11 @@ class CoffeeShopPage(tk.Frame):
             return False
 
     def purchase(self, username, amount):
+        """
+        Check the user is not a guest and then withdraw the amount from the
+        user's account. Reset the order_data_file if the transaction is
+        successful.
+        """
         if username == 'Guest':
             self.toplevel.user_info.configure(text="Transaction successful",
                                               foreground="green")
@@ -1048,8 +1106,8 @@ class CoffeeShopPage(tk.Frame):
             self.toplevel.user_info.configure(text="Transaction successful",
                                               foreground="green")
             CoffeeShopPage.reset_order_data()
-        elif User.withdraw(username, amount) == "insufficient_funds":
-            self.toplevel.user_info.configure(text="Insufficient funds",
+        elif User.withdraw(username, amount) == "inadequate_funds":
+            self.toplevel.user_info.configure(text="Inadequate funds",
                                               foreground="red")
         else:
             self.toplevel.user_info.configure(text="Transaction failed",
@@ -1058,7 +1116,7 @@ class CoffeeShopPage(tk.Frame):
 
     @staticmethod
     def reset_order_data():
-        """ Resets the COFFEE_DATA_F file. """
+        """ Reset the COFFEE_DATA_F file. """
         order_data = ['cappuccino', 'espresso', 'flat_white', 'latte', 'mocha',
                       'total']
         new_data = []
@@ -1068,6 +1126,10 @@ class CoffeeShopPage(tk.Frame):
             file.write('\n'.join(new_data))
 
     def order(self):
+        """
+        Create the order window (which displays the user's order) and display
+        the correct amounts and totals for the user's order.
+        """
         if self.toplevel is None:
             self.toplevel = tk.Toplevel(self)
             self.toplevel.protocol('WM_DELETE_WINDOW',
@@ -1181,7 +1243,7 @@ class CoffeeShopPage(tk.Frame):
             self.toplevel.mainloop()
 
     def remove_window(self):
-        """ Removes Username and Password window """
+        """ Remove the toplevel (order) window. """
         self.toplevel.destroy()
         self.toplevel = None
 
@@ -1193,15 +1255,19 @@ class Check:
         """
         Check files exist and returns data within them:
 
-        'user_names' - for user_names.txt
-        'user_data' - for user_data.txt
-        'current_user' - for current_user.txt
-        'options' - for options.txt
+        :returns: a dict containing the keys:
+
+                 'user_names'   - user_names.txt     (list)
+                 'user_data'    - user_data.txt      (list)
+                 'current_user' - current_user.txt   (list)
+                 'options'      - options.txt        (list)
         """
 
         def options():
             """
             Check options.txt exists and it is created if it does not exist.
+
+            :return: option_data (list).
             """
             while True:
                 try:
@@ -1220,6 +1286,8 @@ class Check:
             """
             Check user_names.txt exists and it is created if it does not exist.
             Returns name_data as list.
+
+            :return: name_data (list).
             """
             while True:
                 try:
@@ -1237,6 +1305,8 @@ class Check:
         def user_data():
             """
             Check user_data.txt exists and it is created if it does not exist.
+
+            :return: _all_data (list).
             """
             while True:
                 try:
@@ -1253,8 +1323,10 @@ class Check:
 
         def current_user():
             """
-            Check current_user.txt exists and it is created if it
-            does not exist.
+            Check current_user.txt exists and it is created if it does not
+            exist.
+
+            :return: current_user_data (list).
             """
             while True:
                 try:
@@ -1275,7 +1347,11 @@ class Check:
     @staticmethod
     def in_user_data(user):
         """
-        Check if user's info is in user_data.txt
+        Check if user's info is in the user_data_file.
+
+        :param user: the user's info to search (str).
+        :returns: True - If user is in the file (bool).
+                  False - If user is None or not in file (bool).
         """
         with open(user_data_file, 'r') as file:
             if user is None:
@@ -1289,8 +1365,10 @@ class Check:
     def all_user_data(user_info):
         """
         Gets all user data from the username and password.
-        :param user_info: str
-        :return: str
+
+        :param user_info: user's username and password (str).
+        :return: (str) - If age and balance don't raise a KeyError.
+                 None - If a KeyError is raised.
         """
         username, password = user_info.split(',')
         try:
@@ -1302,6 +1380,15 @@ class Check:
 
     @staticmethod
     def username(name):
+        """
+        Check if the user's name is in the user_names file, or is '' or
+        contains only alphabet characters or numbers.
+
+        :param name: user's name (str).
+        :return: True - If username matches the regular expression.
+                 False - If username in the user_names file, '' or anything
+                         else.
+        """
         if name in Check.file()["user_names"]:
             print("You cannot use that name as it is already taken.")
             return False
@@ -1318,6 +1405,14 @@ class Check:
 
     @staticmethod
     def password(pwd):
+        """
+        Check if the user's password contains only alphabet characters or
+        numbers.
+
+        :param pwd: user's password (str).
+        :return: True - If password matches the regular expression.
+                 False - If it is anything else.
+        """
         if re.match('^[\w\d_-]*$', pwd):
             print("Password Accepted.")
             return True
@@ -1328,6 +1423,13 @@ class Check:
 
     @staticmethod
     def age(years_old):
+        """
+        Check if the user's age is a two or three digit integer.
+
+        :param years_old: user's age (int).
+        :return: True - If age does not match the regular expression.
+                 False - If does not match the regular expression.
+        """
         if not(re.match('^[\d]{2,3}$', years_old)):
             print("You must enter a two or three digit integer!")
             return False
@@ -1340,7 +1442,13 @@ class User:
 
     @staticmethod
     def new(username, password, age):
-        """ Appending the user_data.txt with new user information"""
+        """
+        Appending the user_data_file with the new user's information.
+
+        :param username: user's login name (str).
+        :param password: user's login password (str).
+        :param age: user's age (str).
+        """
         balance = User.create_balance(age)
         user_data = Check.file()['user_data']
         str_age = str(age)
@@ -1359,6 +1467,17 @@ class User:
 
     @staticmethod
     def get_data(username=None):
+        """
+        Open user_data_file and get the user data for the specified username.
+
+        :param username: the user to get the data for (str).
+        :returns: a dict containing the keys:
+
+                 'username'  - (str)
+                 'password'  - (str)
+                 'age'       - (str)
+                 'balance'   - (str)
+        """
         data = {}
         with open(user_data_file, 'r') as file:
             for line in file:
@@ -1372,6 +1491,16 @@ class User:
 
     @staticmethod
     def get_current():
+        """
+        Open current_user_file and get the current user data.
+
+        :returns: a dict containing the keys:
+
+                 'username'  - (str)
+                 'password'  - (str)
+                 'age'       - (str)
+                 'balance'   - (str)
+        """
         with open(current_user_file, 'r') as file:
             user, pwd, age, balance = file.readline().split(',')
         return {"username": user, "password": pwd,
@@ -1379,7 +1508,18 @@ class User:
 
     @staticmethod
     def create_balance(age):
-        """ Create a balance for a new user based on their age """
+        """
+        Create a balance for a new user based on their age.
+
+        :param age: the user's age in years (str).
+        :returns: 100000 - If over 80           (int)
+                  75000  - If between 60 and 80 (int)
+                  50000  - If between 40 and 60 (int)
+                  25000  - If between 20 and 40 (int)
+                  15000  - If between 15 and 20 (int)
+                  2000   - If less than 15      (int)
+                  5000   - If none of the above (int)
+        """
         age = int(age)
         if age > 80:         # Over 80
             return 100000
@@ -1398,8 +1538,12 @@ class User:
 
     @staticmethod
     def name_change(old_name, new_name):
-        """ Change the user's name and appends it to the text files
-            user_data.txt and user_names.txt
+        """
+        Change the user's name and append it to the user_data_file and
+        user_names_file.
+
+        :param old_name: user's original name (str).
+        :param new_name: user's new name(str).
         """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(old_name)['password']
@@ -1429,7 +1573,12 @@ class User:
 
     @staticmethod
     def password_change(username, new_password):
-        """ Change the user's password and appends it to user_data.txt """
+        """
+        Change the user's password and append it to user_data_file.
+
+        :param username: user's login name (str).
+        :param new_password: user's new password (str).
+        """
         user_data = list(Check.file()['user_data'])
         old_password = User.get_data(username)['password']
         age = User.get_data(username)['age']
@@ -1447,7 +1596,12 @@ class User:
 
     @staticmethod
     def age_change(username, new_age):
-        """ Change the user's age and appends it to user_data.txt """
+        """
+        Change the user's age and append it to user_data_file.
+
+        :param username: user's login name (str).
+        :param new_age: user's new age (str).
+        """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         old_age = User.get_data(username)['age']
@@ -1466,10 +1620,9 @@ class User:
     @staticmethod
     def delete(username):
         """
-        Delete a user from the user data.
+        Delete the user from the user_data_file.
 
-        :param username: str
-        :return: None
+        :param username: user's login name (str).
         """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
@@ -1491,7 +1644,15 @@ class User:
 
     @staticmethod
     def withdraw(username, amount):
-        """ Withdraws money from the user's current balance. """
+        """
+        Withdraw an amount from the user's current balance.
+
+        :param username: user's login name (str).
+        :param amount: amount of money to withdraw (float).
+        :returns: True - If withdrawal is successful (bool).
+                  inadequate_funds - If user balance is less than amount (str).
+                  False - If any other case.
+        """
         user_balance = User.get_data(username)['balance']
         if float(user_balance) >= amount:
             user_data = list(Check.file()['user_data'])
@@ -1512,18 +1673,23 @@ class User:
                 f.write('\n'.join(user_data))
             return True
         elif int(user_balance) < amount:
-            return "insufficient_funds"
+            return "inadequate_funds"
         else:
             return False
 
     @staticmethod
     def deposit(username, amount):
-        """ Withdraws money from the user's current balance. """
+        """
+        Deposit an amount to the user's current balance.
+
+        :param username: user's login name (str).
+        :param amount: amount of money to deposit (float).
+        """
         user_balance = User.get_data(username)['balance']
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         age = User.get_data(username)['age']
-        print("Depositing {} from {}".format(amount, username))
+        print("Depositing {} to {}".format(amount, username))
         del_user = username + ',' + password + ',' + age + ',' + \
             user_balance
         user_data.remove(del_user)
@@ -1541,19 +1707,24 @@ class User:
 class Options:
 
     def __init__(self):
-        """ Setting up default options """
+        """ Setup the default options. """
         self.options = Options.get()
         if self.options['running'] is 'True':
             sys.exit()
         else:
             self.options['running'] = 'True'
-            self.options['times_opened'] = int(self.options['times_opened']) + 1
+            self.options['times_opened'] = int(self.options['times_opened'] + 1
+                                               )
             new_data = self.options
             Options.update(new_data)
 
     @staticmethod
     def get():
-        """ Return all options. """
+        """
+        Get all the options and their values.
+
+        :return: data (dict).
+        """
         data = {}
         with open(options_file, 'r') as file:
             for line in file:
@@ -1563,7 +1734,11 @@ class Options:
 
     @staticmethod
     def update(new_data):
-        """ Change the old option data to the new data. """
+        """
+        Change the old option data to the new data.
+
+        :param new_data: all of the new option data (dict).
+        """
         option_data = []
         for option in new_data:
             option_data.append("{}:{}".format(option, new_data[option]))
@@ -1572,6 +1747,7 @@ class Options:
             file.write('\n'.join(option_data))
 
     def exit(self):
+        """ Change the value of running to False in the options_file. """
         with open(options_file, 'r') as file:
             if "running:False" in file:
                 sys.exit()
@@ -1582,11 +1758,16 @@ class Options:
 
     @staticmethod
     def print():
+        """ Print the options and their values. """
         for option in Options.get():
             print("{}:{}".format(option, Options.get()[option]))
 
 
 def main():
+    """
+    Check files, setup class instances, app dimensions and properties. Start
+    of the Virtual World program, and calls for the exit cleanup.
+    """
     # import options_write  # overwrites the options file with default values
     Check.file()
     app = VirtualWorld()
