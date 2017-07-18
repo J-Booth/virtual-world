@@ -1203,67 +1203,71 @@ class Check:
             """ 
             Check options.txt exists and it is created if it does not exist.
             """
-            try:
-                with open(options_file, 'r') as file:
-                    print("Opening the options file '{}'.".format(
-                          options_file))
-            except FileNotFoundError:
-                print("Failed to open the 'options.txt' file")
-                with open(options_file, 'w') as file:
-                    print("Creating options.txt...")
-                    file.write("running:False\ntimes_opened:0")
-            option_data = [line.strip() for line in file]
-            return option_data
+            while True:
+                try:
+                    with open(options_file, 'r') as file:
+                        print("Opening the options file '{}'.".format(
+                              options_file))
+                        option_data = [line.strip() for line in file]
+                    return option_data
+                except FileNotFoundError:
+                    print("Failed to open the 'options.txt' file")
+                    with open(options_file, 'w') as file:
+                        print("Creating options.txt...")
+                        file.write("running:False\ntimes_opened:0")
 
         def user_names():
             """ 
             Check user_names.txt exists and it is created if it does not exist. 
             Returns name_data as list.
             """
-            try:
-                with open(user_names_file, 'r') as file:
-                    print("Opening the user_names_file '{}'.".format(
-                          user_names_file))
-            except FileNotFoundError:
-                print("Failed to open '{}'.".format(user_names_file))
-                with open(user_names_file, 'w') as file:
-                    print("Creating '{}'...".format(user_names_file))
-                    file.write("Guest")
-            name_data = [line.strip() for line in file]
-            return name_data
+            while True:
+                try:
+                    with open(user_names_file, 'r') as file:
+                        print("Opening the user_names_file '{}'.".format(
+                              user_names_file))
+                        name_data = [line.strip() for line in file]
+                    return name_data
+                except FileNotFoundError:
+                    print("Failed to open '{}'.".format(user_names_file))
+                    with open(user_names_file, 'w') as file:
+                        print("Creating '{}'...".format(user_names_file))
+                        file.write("Guest")
 
         def user_data():
             """ 
             Check user_data.txt exists and it is created if it does not exist.
             """
-            try:
-                with open(user_data_file, 'r') as file:
-                    print("Opening the user_data_file '{}'.".format(
-                          user_data_file))
-            except FileNotFoundError:
-                print("Failed to open '{}'.".format(user_data_file))
-                with open(user_data_file, 'w') as file:
-                    print("Creating '{}'...".format(user_data_file))
-                    file.write("Guest,None,50,1000000")
-            _all_data = [line.strip() for line in file]
-            return _all_data
+            while True:
+                try:
+                    with open(user_data_file, 'r') as file:
+                        print("Opening the user_data_file '{}'.".format(
+                              user_data_file))
+                        _all_data = [line.strip() for line in file]
+                    return _all_data
+                except FileNotFoundError:
+                    print("Failed to open '{}'.".format(user_data_file))
+                    with open(user_data_file, 'w') as file:
+                        print("Creating '{}'...".format(user_data_file))
+                        file.write("Guest,None,50,1000000")
 
         def current_user():
             """ 
             Check current_user.txt exists and it is created if it 
             does not exist.
             """
-            try:
-                with open(current_user_file, 'r') as file:
-                    print("Opening the current_user_file '{}'.".format(
-                          current_user_file))
-            except FileNotFoundError:
-                print("Failed to open '{}'".format(current_user_file))
-                with open(current_user_file, 'w') as file:
-                    print("Creating '{}'...".format(current_user_file))
-                    file.write("Guest,None,50,1000000")
-            current_user_data = [line.strip() for line in file]
-            return current_user_data
+            while True:
+                try:
+                    with open(current_user_file, 'r') as file:
+                        print("Opening the current_user_file '{}'.".format(
+                              current_user_file))
+                        current_user_data = [line.strip() for line in file]
+                    return current_user_data
+                except FileNotFoundError:
+                    print("Failed to open '{}'".format(current_user_file))
+                    with open(current_user_file, 'w') as file:
+                        print("Creating '{}'...".format(current_user_file))
+                        file.write("Guest,None,50,1000000")
 
         return {"options": options(), "user_names": user_names(),
                 "user_data": user_data(), "current_user": current_user()}
@@ -1538,53 +1542,48 @@ class Options:
 
     def __init__(self):
         """ Setting up default options """
+        self.options = Options.get()
+        if self.options['running'] is 'True':
+            sys.exit()
+        else:
+            self.options['running'] = 'True'
+            self.options['times_opened'] = int(self.options['times_opened']) + 1
+            new_data = self.options
+            Options.update(new_data)
+
+    @staticmethod
+    def get():
+        """ Return all options. """
         data = {}
         with open(options_file, 'r') as file:
             for line in file:
                 option, value = line.strip().split(':')
                 data[option] = value
+        return data
 
-        self.is_running = data['running']
-        self.times_opened = int(data['times_opened'])
-
-        with open(options_file, 'r') as file:
-            option_data = [line.strip() for line in file]
-            if 'running:True' in option_data:
-                sys.exit()
-            else:
-                option_data.remove('running:{}'.format(self.is_running))
-                option_data.remove('times_opened:{}'.format(self.times_opened))
-                self.is_running = 'True'
-                self.times_opened += 1
-                option_data.append('running:{}'.format(self.is_running))
-                option_data.append('times_opened:{}'.format(self.times_opened))
+    @staticmethod
+    def update(new_data):
+        """ Change the old option data to the new data. """
+        option_data = []
+        for option in new_data:
+            option_data.append("{}:{}".format(option, new_data[option]))
 
         with open(options_file, 'w') as file:
             file.write('\n'.join(option_data))
 
     def exit(self):
         with open(options_file, 'r') as file:
-            option_data = [line.strip() for line in file]
-            if 'running:False' in file:
+            if "running:False" in file:
                 sys.exit()
             else:
-                option_data.remove('running:{}'.format(self.is_running))
-                option_data.remove('times_opened:{}'.format(self.times_opened))
-                self.is_running = 'False'
-                option_data.append('running:{}'.format(self.is_running))
-                option_data.append('times_opened:{}'.format(self.times_opened))
-
-        with open(options_file, 'w') as file:
-            file.write('\n'.join(option_data))
+                self.options['running'] = "False"
+                new_data = self.options
+                Options.update(new_data)
 
     @staticmethod
     def print():
-        data = {}
-        with open(options_file, 'r') as file:
-            for line in file:
-                option, value = line.strip().split(':')
-                data[option] = value
-                print(option, data[option])
+        for option in Options.get():
+            print("{}:{}".format(option, Options.get()[option]))
 
 
 def main():
