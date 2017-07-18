@@ -114,7 +114,7 @@ class VirtualWorld(tk.Tk):
             """
             Toggle balance button.
 
-            :raises: ValueError: Balance not valid!
+            :raise: ValueError: Balance not valid!
             """
             nonlocal hidden
             newest_balance = current_user()["balance"]
@@ -456,7 +456,7 @@ class UserPage(tk.Frame):
 class SettingsPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ For the user to change their settings """
+        """ Settings frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -518,7 +518,12 @@ class SettingsPage(tk.Frame):
         back_button.image = back_img
 
     def open_window(self, setting):
-        """ Username and Password window """
+        """
+        Create a Username and Password window for verifying user information
+        for changing settings, and provide a Toplevel for entries to be added.
+
+        :return: False - If current user is a guest.
+        """
         if self.toplevel is None:
             current_user = Check.file()['current_user']
             if 'Guest,None,50,1000000' in list(current_user):
@@ -582,17 +587,22 @@ class SettingsPage(tk.Frame):
             self.toplevel.mainloop()
 
     def remove_window(self):
-        """ Removes Username and Password window """
+        """ Remove the toplevel (username and password) window. """
         self.toplevel.destroy()
         self.toplevel = None
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Remove the SettingsPage frame from the user's view. """
         self.controller.hide_frame(SettingsPage)
 
     def submit_button(self):
-        """ Check user input and change the setting window
-            for the specified setting """
+        """
+        Check user input and change the setting window for the specified
+        setting.
+
+        :return: False - If user data is incorrect or if there is no data.
+        :raise: NameError: Setting name is invalid!
+        """
         username = self.toplevel.username.get()
         password = self.toplevel.password.get()
         user_info = username + ',' + password
@@ -660,43 +670,54 @@ class SettingsPage(tk.Frame):
             return False
 
     def change_name(self, new_name):
-        """ Check name and either change or reject name """
+        """
+        Change the user's name if the new name is valid, decline the username
+        if is taken.
+
+        :param new_name: This is user's new name (str).
+        """
         if Check.username(new_name):
             success_label = ttk.Label(self.toplevel, text="Username Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-            print("Changing username...")
             old_name = self.toplevel.username.get()
+            print("Changing username...")
             User.name_change(old_name, new_name)
-
             success_label.after(2500, lambda: self.remove_window())
-
         else:
             failure_label = ttk.Label(self.toplevel, text="Username Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def change_password(self, new_password):
-        """ Check password and either change or reject password """
+        """
+        Change the user's password if the new password is valid, decline the
+        password if it is invalid.
+
+        :param new_password: This is user's new password (str).
+        """
         if Check.password(new_password):
             success_label = ttk.Label(self.toplevel, text="Password Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-            print("Changing password...")
             username = self.toplevel.username.get()
+            print("Changing password...")
             User.password_change(username, new_password)
-
             success_label.after(2500, lambda: self.remove_window())
-
         else:
             failure_label = ttk.Label(self.toplevel, text="Password Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def change_age(self, new_age):
-        """ Check age and either change or reject age """
+        """
+        Change the user's age if the new age is valid, decline the
+        age if it is below 10 and over 999.
+
+        :param new_age: This is user's new age (str).
+        """
         if Check.age(new_age):
             success_label = ttk.Label(self.toplevel, text="Age Accepted!",
                                       foreground="green")
@@ -714,21 +735,27 @@ class SettingsPage(tk.Frame):
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
     def delete_user(self, username):
-        """ Delete the user """
+        """
+        Delete the given user.
+
+        :param username: This is user's login name (str).
+        """
         success_label = ttk.Label(self.toplevel, text="Deleting user...",
                                   foreground="green")
         success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
         print("Deleting user...")
         User.delete(username)
-        del_window = (lambda: self.remove_window_del(self.controller))
+        del_window = (lambda: self.remove_window_del())
         success_label.after(2500, del_window)
 
-    def remove_window_del(self, controller):
-        """ Destroy the window and sign out the current user """
+    def remove_window_del(self):
+        """
+        Destroy the window and bring the LoginPage frame to the user's view.
+        """
         self.toplevel.destroy()
         self.toplevel = None
-        controller.show_frame(LoginPage)
+        self.controller.show_frame(LoginPage)
 
 
 class ShopPage(tk.Frame):
