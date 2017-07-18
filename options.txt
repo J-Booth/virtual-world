@@ -1,2 +1,2 @@
-times_opened:1
+times_opened:0
 running:False
