@@ -761,7 +761,7 @@ class SettingsPage(tk.Frame):
 class ShopPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Display a list of shops the user can visit """
+        """ Shops frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -801,19 +801,23 @@ class ShopPage(tk.Frame):
         VirtualWorld.menu_bar(self, controller)
 
     def back_button(self):
+        """ Raise the UserPage frame to the user's view. """
         self.controller.show_frame(UserPage)
 
     def shop_coffee(self):
+        """ Raise the CoffeeShopPage frame to the user's view. """
         self.controller.show_frame(CoffeeShopPage)
 
     # def shop_tech(self):
+    # """ Raise the TechShopPage frame to the user's view. """
     #     self.controller.show_frame(TechShopPage)
     #
     # def shop_pizza(self):
+    # """ Raise the PizzaShopPage frame to the user's view. """
     #     self.controller.show_frame(PizzaShopPage)
 
     def balance_button(self):
-        # To be finished
+        # TODO: Fix this.
         # print("Balance: ${:.2f}".format(user.balance))
         pass
 
