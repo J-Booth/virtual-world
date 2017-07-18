@@ -5,8 +5,8 @@ Settings with editable name, password, age and the ability to delete your user d
 
 ## Features in the works:
 
-More options...
+Tech Shop and Pizza Shop
 
 ## Features to be implemented:
 
-Pizza Shop, Tech Shop, Hangman, rock-paper-scissors, a number guessing game, Tasks and a Help Menu
+Hangman, rock-paper-scissors, a number guessing game, Tasks and a Help Menu
