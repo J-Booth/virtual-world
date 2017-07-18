@@ -1643,7 +1643,7 @@ class User:
 class Options:
 
     def __init__(self):
-        """ Setting up default options """
+        """ Setup the default options. """
         self.options = Options.get()
         if self.options['running'] is 'True':
             sys.exit()
@@ -1655,7 +1655,11 @@ class Options:
 
     @staticmethod
     def get():
-        """ Return all options. """
+        """
+        Get all the options and their values.
+
+        :return: data (dict).
+        """
         data = {}
         with open(options_file, 'r') as file:
             for line in file:
@@ -1665,7 +1669,11 @@ class Options:
 
     @staticmethod
     def update(new_data):
-        """ Change the old option data to the new data. """
+        """
+        Change the old option data to the new data.
+
+        :param new_data: all of the new option data (dict).
+        """
         option_data = []
         for option in new_data:
             option_data.append("{}:{}".format(option, new_data[option]))
@@ -1674,6 +1682,7 @@ class Options:
             file.write('\n'.join(option_data))
 
     def exit(self):
+        """ Change the value of running to False in the options_file. """
         with open(options_file, 'r') as file:
             if "running:False" in file:
                 sys.exit()
@@ -1684,6 +1693,7 @@ class Options:
 
     @staticmethod
     def print():
+        """ Print the options and their values. """
         for option in Options.get():
             print("{}:{}".format(option, Options.get()[option]))
 
