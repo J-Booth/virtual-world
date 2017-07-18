@@ -1542,26 +1542,17 @@ class Options:
 
     def __init__(self):
         """ Setting up default options """
+        self.options = Options.get()
+        if self.options['running'] is 'True':
+            sys.exit()
+        else:
+            self.options['running'] = 'True'
+            self.options['times_opened'] = int(self.options['times_opened']) + 1
+            new_data = self.options
+            Options.update(new_data)
 
-        for option in Options.get(self):
-            print(option)
-
-        # with open(options_file, 'r') as file:
-        #     option_data = [line.strip() for line in file]
-        #     if 'running:True' in option_data:
-        #         sys.exit()
-        #     else:
-        #         option_data.remove('running:{}'.format(self.is_running))
-        #         option_data.remove('times_opened:{}'.format(self.times_opened))
-        #         self.is_running = 'True'
-        #         self.times_opened += 1
-        #         option_data.append('running:{}'.format(self.is_running))
-        #         option_data.append('times_opened:{}'.format(self.times_opened))
-        #
-        # with open(options_file, 'w') as file:
-        #     file.write('\n'.join(option_data))
-
-    def get(self):
+    @staticmethod
+    def get():
         """ Return all options. """
         data = {}
         with open(options_file, 'r') as file:
@@ -1570,29 +1561,29 @@ class Options:
                 data[option] = value
         return data
 
-    def exit(self):
-        with open(options_file, 'r') as file:
-            option_data = [line.strip() for line in file]
-            if 'running:False' in file:
-                sys.exit()
-            else:
-                option_data.remove('running:{}'.format(self.is_running))
-                option_data.remove('times_opened:{}'.format(self.times_opened))
-                self.is_running = 'False'
-                option_data.append('running:{}'.format(self.is_running))
-                option_data.append('times_opened:{}'.format(self.times_opened))
+    @staticmethod
+    def update(new_data):
+        """ Change the old option data to the new data. """
+        option_data = []
+        for option in new_data:
+            option_data.append("{}:{}".format(option, new_data[option]))
 
         with open(options_file, 'w') as file:
             file.write('\n'.join(option_data))
 
+    def exit(self):
+        with open(options_file, 'r') as file:
+            if "running:False" in file:
+                sys.exit()
+            else:
+                self.options['running'] = "False"
+                new_data = self.options
+                Options.update(new_data)
+
     @staticmethod
     def print():
-        data = {}
-        with open(options_file, 'r') as file:
-            for line in file:
-                option, value = line.strip().split(':')
-                data[option] = value
-                print(option, data[option])
+        for option in Options.get():
+            print("{}:{}".format(option, Options.get()[option]))
 
 
 def main():
