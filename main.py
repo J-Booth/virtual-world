@@ -1252,7 +1252,7 @@ class Check:
 
     @staticmethod
     def file():
-        """ 
+        """
         Check files exist and returns data within them:
 
         :returns: a dict containing the keys:
@@ -1264,7 +1264,7 @@ class Check:
         """
 
         def options():
-            """ 
+            """
             Check options.txt exists and it is created if it does not exist.
 
             :return: option_data (list).
@@ -1283,8 +1283,8 @@ class Check:
                         file.write("running:False\ntimes_opened:0")
 
         def user_names():
-            """ 
-            Check user_names.txt exists and it is created if it does not exist. 
+            """
+            Check user_names.txt exists and it is created if it does not exist.
             Returns name_data as list.
 
             :return: name_data (list).
@@ -1303,7 +1303,7 @@ class Check:
                         file.write("Guest")
 
         def user_data():
-            """ 
+            """
             Check user_data.txt exists and it is created if it does not exist.
 
             :return: _all_data (list).
@@ -1322,9 +1322,9 @@ class Check:
                         file.write("Guest,None,50,1000000")
 
         def current_user():
-            """ 
-            Check current_user.txt exists and it is created if it 
-            does not exist.
+            """
+            Check current_user.txt exists and it is created if it does not
+            exist.
 
             :return: current_user_data (list).
             """
@@ -1649,7 +1649,8 @@ class Options:
             sys.exit()
         else:
             self.options['running'] = 'True'
-            self.options['times_opened'] = int(self.options['times_opened']) + 1
+            self.options['times_opened'] = int(self.options['times_opened'] + 1
+                                               )
             new_data = self.options
             Options.update(new_data)
 
