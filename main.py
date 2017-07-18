@@ -290,7 +290,7 @@ class LoginPage(tk.Frame):
 
 class SignUp(tk.Frame):
     def __init__(self, parent, controller):
-        """ A user can signup to Virtual World and have their info saved """
+        """ Signup frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -346,12 +346,14 @@ class SignUp(tk.Frame):
         submit_button.image = submit_img
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Raise the LoginPage frame to the user's view. """
         self.controller.show_frame(LoginPage)
 
     def create_user(self, username, password, age):
-        """ Adds the user to the text file, shows a success message then
-            returns the user back to the login page. """
+        """
+        Adds the user to the text file, shows a success message, then returns
+        the user back to the LoginPage frame.
+        """
         User.new(username, password, age)
         self.name_error_label.configure(text="")  # ttk label
         self.pwd_error_label.configure(text="", )  # ttk label
@@ -359,7 +361,7 @@ class SignUp(tk.Frame):
         self.age_error_label.after(2500, self.back_button)
 
     def submit_button(self):
-        """ Check user input then output a success/fail message """
+        """ Check user input then output a success/fail message. """
         if Check.username(self.username.get()):
             username = self.username.get()
             if Check.password(self.password.get()):
