@@ -1689,6 +1689,10 @@ class Options:
 
 
 def main():
+    """
+    Check files, setup class instances, app dimensions and properties. Start
+    of the Virtual World program, and calls for the exit cleanup.
+    """
     # import options_write  # overwrites the options file with default values
     Check.file()
     app = VirtualWorld()
