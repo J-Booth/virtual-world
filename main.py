@@ -1106,8 +1106,8 @@ class CoffeeShopPage(tk.Frame):
             self.toplevel.user_info.configure(text="Transaction successful",
                                               foreground="green")
             CoffeeShopPage.reset_order_data()
-        elif User.withdraw(username, amount) == "insufficient_funds":
-            self.toplevel.user_info.configure(text="Insufficient funds",
+        elif User.withdraw(username, amount) == "inadequate_funds":
+            self.toplevel.user_info.configure(text="Inadequate funds",
                                               foreground="red")
         else:
             self.toplevel.user_info.configure(text="Transaction failed",
@@ -1442,7 +1442,13 @@ class User:
 
     @staticmethod
     def new(username, password, age):
-        """ Appending the user_data.txt with new user information"""
+        """
+        Appending the user_data_file with the new user's information.
+
+        :param username: user's login name (str).
+        :param password: user's login password (str).
+        :param age: user's age (str).
+        """
         balance = User.create_balance(age)
         user_data = Check.file()['user_data']
         str_age = str(age)
@@ -1461,6 +1467,17 @@ class User:
 
     @staticmethod
     def get_data(username=None):
+        """
+        Open user_data_file and get the user data for the specified username.
+
+        :param username: the user to get the data for (str).
+        :returns: a dict containing the keys:
+
+                 'username'  - (str)
+                 'password'  - (str)
+                 'age'       - (str)
+                 'balance'   - (str)
+        """
         data = {}
         with open(user_data_file, 'r') as file:
             for line in file:
@@ -1474,6 +1491,16 @@ class User:
 
     @staticmethod
     def get_current():
+        """
+        Open current_user_file and get the current user data.
+
+        :returns: a dict containing the keys:
+
+                 'username'  - (str)
+                 'password'  - (str)
+                 'age'       - (str)
+                 'balance'   - (str)
+        """
         with open(current_user_file, 'r') as file:
             user, pwd, age, balance = file.readline().split(',')
         return {"username": user, "password": pwd,
@@ -1481,7 +1508,18 @@ class User:
 
     @staticmethod
     def create_balance(age):
-        """ Create a balance for a new user based on their age """
+        """
+        Create a balance for a new user based on their age.
+
+        :param age: the user's age in years (str).
+        :returns: 100000 - If over 80           (int)
+                  75000  - If between 60 and 80 (int)
+                  50000  - If between 40 and 60 (int)
+                  25000  - If between 20 and 40 (int)
+                  15000  - If between 15 and 20 (int)
+                  2000   - If less than 15      (int)
+                  5000   - If none of the above (int)
+        """
         age = int(age)
         if age > 80:         # Over 80
             return 100000
@@ -1500,8 +1538,12 @@ class User:
 
     @staticmethod
     def name_change(old_name, new_name):
-        """ Change the user's name and appends it to the text files
-            user_data.txt and user_names.txt
+        """
+        Change the user's name and append it to the user_data_file and
+        user_names_file.
+
+        :param old_name: user's original name (str).
+        :param new_name: user's new name(str).
         """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(old_name)['password']
@@ -1531,7 +1573,12 @@ class User:
 
     @staticmethod
     def password_change(username, new_password):
-        """ Change the user's password and appends it to user_data.txt """
+        """
+        Change the user's password and append it to user_data_file.
+
+        :param username: user's login name (str).
+        :param new_password: user's new password (str).
+        """
         user_data = list(Check.file()['user_data'])
         old_password = User.get_data(username)['password']
         age = User.get_data(username)['age']
@@ -1549,7 +1596,12 @@ class User:
 
     @staticmethod
     def age_change(username, new_age):
-        """ Change the user's age and appends it to user_data.txt """
+        """
+        Change the user's age and append it to user_data_file.
+
+        :param username: user's login name (str).
+        :param new_age: user's new age (str).
+        """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         old_age = User.get_data(username)['age']
@@ -1568,10 +1620,9 @@ class User:
     @staticmethod
     def delete(username):
         """
-        Delete a user from the user data.
+        Delete the user from the user_data_file.
 
-        :param username: str
-        :return: None
+        :param username: user's login name (str).
         """
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
@@ -1593,7 +1644,15 @@ class User:
 
     @staticmethod
     def withdraw(username, amount):
-        """ Withdraws money from the user's current balance. """
+        """
+        Withdraw an amount from the user's current balance.
+
+        :param username: user's login name (str).
+        :param amount: amount of money to withdraw (float).
+        :returns: True - If withdrawal is successful (bool).
+                  inadequate_funds - If user balance is less than amount (str).
+                  False - If any other case.
+        """
         user_balance = User.get_data(username)['balance']
         if float(user_balance) >= amount:
             user_data = list(Check.file()['user_data'])
@@ -1614,18 +1673,23 @@ class User:
                 f.write('\n'.join(user_data))
             return True
         elif int(user_balance) < amount:
-            return "insufficient_funds"
+            return "inadequate_funds"
         else:
             return False
 
     @staticmethod
     def deposit(username, amount):
-        """ Withdraws money from the user's current balance. """
+        """
+        Deposit an amount to the user's current balance.
+
+        :param username: user's login name (str).
+        :param amount: amount of money to deposit (float).
+        """
         user_balance = User.get_data(username)['balance']
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         age = User.get_data(username)['age']
-        print("Depositing {} from {}".format(amount, username))
+        print("Depositing {} to {}".format(amount, username))
         del_user = username + ',' + password + ',' + age + ',' + \
             user_balance
         user_data.remove(del_user)
