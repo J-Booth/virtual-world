@@ -186,7 +186,7 @@ class VirtualWorld(tk.Tk):
 class LoginPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Where the user can login to Virtual World """
+        """ Login frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -246,7 +246,11 @@ class LoginPage(tk.Frame):
         guest_button.image = guest_img
 
     def sign_in_button(self):
-        """ Check user's info and sign them in """
+        """
+        Check user's info and sign them in.
+
+        :return: False - If user does not exist.
+        """
         username = self.username.get()
         password = self.password.get()
         name_and_pass = username + ',' + password
@@ -277,7 +281,7 @@ class LoginPage(tk.Frame):
             return False
 
     def guest_button(self):
-        """" Takes the user (without a login) to the user homepage """
+        """" Take the user (without a login) to the user homepage. """
         print('guest button')
         with open(current_user_file, 'w') as f:
             f.write('Guest,None,50,1000000')
