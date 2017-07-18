@@ -830,7 +830,7 @@ class CoffeeShopPage(tk.Frame):
     mocha_cost = 3.50
 
     def __init__(self, parent, controller):
-        """ Coffee Shop where the user can buy different coffees """
+        """ Coffee shop frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -965,9 +965,7 @@ class CoffeeShopPage(tk.Frame):
         CoffeeShopPage.reset_order_data()
 
     def erase(self):
-        """
-        Removes all data from the entries.
-        """
+        """ Remove all data from the order entries. """
         for amount in (self.cappuccino_amount, self.espresso_amount,
                        self.flat_w_amount, self.latte_amount,
                        self.mocha_amount):
@@ -979,10 +977,11 @@ class CoffeeShopPage(tk.Frame):
         Only allow a 1 digit integer and if the total of all the entries
         is greater than one, enable the cart button.
 
-        :param P: allowed value (%P)
-        :param S: text being inserted (%S)
-        :param _type: the coffee type (str)
-        :return: True or False
+        :param P: allowed value (%P).
+        :param S: text being inserted (%S).
+        :param _type: the coffee type (str).
+        :returns: True - If value is valid.
+                 False - If input is invalid.
         """
         allowed_value = P  # So the values of P and S are understandable
         inserted_value = S  # But are set as param so that %P and %S are used.
@@ -1055,10 +1054,16 @@ class CoffeeShopPage(tk.Frame):
             return False
 
     def back_button(self):
-        """ Go back to the Login page """
+        """ Raise the ShopPage frame to the user's view. """
         self.controller.show_frame(ShopPage)
 
     def submit_button(self):
+        """
+        Check user input and change the order window for the specified
+        user, where guests do not pay but all other users do.
+
+        :return: False - If user data is incorrect or if there is no data.
+        """
         try:
             username = self.toplevel.username.get()
             password = self.toplevel.password.get()
@@ -1088,6 +1093,11 @@ class CoffeeShopPage(tk.Frame):
             return False
 
     def purchase(self, username, amount):
+        """
+        Check the user is not a guest and then withdraw the amount from the
+        user's account. Reset the order_data_file if the transaction is
+        successful.
+        """
         if username == 'Guest':
             self.toplevel.user_info.configure(text="Transaction successful",
                                               foreground="green")
@@ -1106,7 +1116,7 @@ class CoffeeShopPage(tk.Frame):
 
     @staticmethod
     def reset_order_data():
-        """ Resets the COFFEE_DATA_F file. """
+        """ Reset the COFFEE_DATA_F file. """
         order_data = ['cappuccino', 'espresso', 'flat_white', 'latte', 'mocha',
                       'total']
         new_data = []
@@ -1116,6 +1126,10 @@ class CoffeeShopPage(tk.Frame):
             file.write('\n'.join(new_data))
 
     def order(self):
+        """
+        Create the order window (which displays the user's order) and display
+        the correct amounts and totals for the user's order.
+        """
         if self.toplevel is None:
             self.toplevel = tk.Toplevel(self)
             self.toplevel.protocol('WM_DELETE_WINDOW',
@@ -1229,7 +1243,7 @@ class CoffeeShopPage(tk.Frame):
             self.toplevel.mainloop()
 
     def remove_window(self):
-        """ Removes Username and Password window """
+        """ Remove the toplevel (order) window. """
         self.toplevel.destroy()
         self.toplevel = None
 
