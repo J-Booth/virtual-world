@@ -1,4 +1,3 @@
-# TODO (A) Improve/add doc strings to all methods/functions.
-# TODO (B) Add +TechShopPage and +PizzaShopPage
-# TODO (C) Add +HangmanPage and +GuessMyNumberPage
-# TODO (D) @submit_button needs reworking so that it checks input live instead of onclick. +SignUp
+# TODO (A) Add +TechShopPage and +PizzaShopPage
+# TODO (B) Add +HangmanPage and +GuessMyNumberPage
+# TODO (C) @submit_button needs reworking so that it checks input live instead of onclick. +SignUp
