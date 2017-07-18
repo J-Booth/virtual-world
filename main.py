@@ -1255,15 +1255,19 @@ class Check:
         """ 
         Check files exist and returns data within them:
 
-        'user_names' - for user_names.txt
-        'user_data' - for user_data.txt
-        'current_user' - for current_user.txt
-        'options' - for options.txt
+        :returns: a dict containing the keys:
+
+                 'user_names'   - user_names.txt     (list)
+                 'user_data'    - user_data.txt      (list)
+                 'current_user' - current_user.txt   (list)
+                 'options'      - options.txt        (list)
         """
 
         def options():
             """ 
             Check options.txt exists and it is created if it does not exist.
+
+            :return: option_data (list).
             """
             while True:
                 try:
@@ -1282,6 +1286,8 @@ class Check:
             """ 
             Check user_names.txt exists and it is created if it does not exist. 
             Returns name_data as list.
+
+            :return: name_data (list).
             """
             while True:
                 try:
@@ -1299,6 +1305,8 @@ class Check:
         def user_data():
             """ 
             Check user_data.txt exists and it is created if it does not exist.
+
+            :return: _all_data (list).
             """
             while True:
                 try:
@@ -1317,6 +1325,8 @@ class Check:
             """ 
             Check current_user.txt exists and it is created if it 
             does not exist.
+
+            :return: current_user_data (list).
             """
             while True:
                 try:
@@ -1337,7 +1347,11 @@ class Check:
     @staticmethod
     def in_user_data(user):
         """
-        Check if user's info is in user_data.txt
+        Check if user's info is in the user_data_file.
+
+        :param user: the user's info to search (str).
+        :returns: True - If user is in the file (bool).
+                  False - If user is None or not in file (bool).
         """
         with open(user_data_file, 'r') as file:
             if user is None:
@@ -1351,8 +1365,10 @@ class Check:
     def all_user_data(user_info):
         """
         Gets all user data from the username and password.
-        :param user_info: str
-        :return: str
+
+        :param user_info: user's username and password (str).
+        :return: (str) - If age and balance don't raise a KeyError.
+                 None - If a KeyError is raised.
         """
         username, password = user_info.split(',')
         try:
@@ -1364,6 +1380,15 @@ class Check:
 
     @staticmethod
     def username(name):
+        """
+        Check if the user's name is in the user_names file, or is '' or
+        contains only alphabet characters or numbers.
+
+        :param name: user's name (str).
+        :return: True - If username matches the regular expression.
+                 False - If username in the user_names file, '' or anything
+                         else.
+        """
         if name in Check.file()["user_names"]:
             print("You cannot use that name as it is already taken.")
             return False
@@ -1380,6 +1405,14 @@ class Check:
 
     @staticmethod
     def password(pwd):
+        """
+        Check if the user's password contains only alphabet characters or
+        numbers.
+
+        :param pwd: user's password (str).
+        :return: True - If password matches the regular expression.
+                 False - If it is anything else.
+        """
         if re.match('^[\w\d_-]*$', pwd):
             print("Password Accepted.")
             return True
@@ -1390,6 +1423,13 @@ class Check:
 
     @staticmethod
     def age(years_old):
+        """
+        Check if the user's age is a two or three digit integer.
+
+        :param years_old: user's age (int).
+        :return: True - If age does not match the regular expression.
+                 False - If does not match the regular expression.
+        """
         if not(re.match('^[\d]{2,3}$', years_old)):
             print("You must enter a two or three digit integer!")
             return False
