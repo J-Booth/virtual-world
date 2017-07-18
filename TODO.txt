@@ -1,4 +1,3 @@
-# TODO (A) +Options needs redoing so that it can allow for more options to be added.
 # TODO (A) Improve/add doc strings to all methods/functions.
 # TODO (B) Add +TechShopPage and +PizzaShopPage
 # TODO (C) Add +HangmanPage and +GuessMyNumberPage
