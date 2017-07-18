@@ -1713,8 +1713,8 @@ class Options:
             sys.exit()
         else:
             self.options['running'] = 'True'
-            self.options['times_opened'] = int(self.options['times_opened'] + 1
-                                               )
+            self.options['times_opened'] = (int(self.options['times_opened']) +
+                                            1)
             new_data = self.options
             Options.update(new_data)
 
