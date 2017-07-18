@@ -389,7 +389,7 @@ class SignupPage(tk.Frame):
 class UserPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ User's Homepage """
+        """ User's homepage frame of Virtual World. """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -434,18 +434,19 @@ class UserPage(tk.Frame):
         back_button.image = back_img
 
     def shops_button(self):
+        """ Raise the ShopPage frame to the user's view. """
         self.controller.show_frame(ShopPage)
 
     def games_button(self):
-        # self.controller.show_frame(GamePage)
+        """ Raise the GamePage frame to the user's view. """
         pass
 
     def tasks_button(self):
-        # self.controller.show_frame(TaskPage)
+        """ Raise the TaskPage frame to the user's view. """
         pass
 
     def back_button(self):
-        """ Appending current_user.txt with a guest user """
+        """ Append current_user_file with a guest user then show LoginPage. """
         user = "Guest,None,50,1000000"
         with open(current_user_file, 'w') as f:
             f.write(user)
