@@ -31,7 +31,7 @@ from __init__ import *
 class VirtualWorld(tk.Tk):
 
     def __init__(self, *args, **kwargs):
-        """ Main body of the Virtual World Game """
+        """ Setup of the Virtual World Game """
         tk.Tk.__init__(self, *args, **kwargs)
 
         tk.Tk.iconbitmap(self, default="img/virtualworld_logo.ico")
@@ -52,7 +52,7 @@ class VirtualWorld(tk.Tk):
         self.init_window()
 
     def init_window(self):
-        """ Menu creation """
+        """ Create the upper Menu bar (for all frames). """
         _menu = tk.Menu(self.master)
         self.config(menu=_menu)
 
@@ -74,16 +74,17 @@ class VirtualWorld(tk.Tk):
         _menu.add_cascade(label="Help", menu=help_menu)
 
     def show_frame(self, cont):
-        """ Bring frame to the user's view"""
+        """ Bring frame to the user's view. """
         frame = self.frames[cont]
         frame.tkraise()
 
     def hide_frame(self, cont):
+        """ Send frame away from the user's view. """
         frame = self.frames[cont]
         frame.lower()
 
     def menu_bar(self, controller):
-        """ Menu bar creation """
+        """ Create the lower Menu bar (for most frames). """
         data = {}
         with open(current_user_file, 'r') as file:
             for line in file:
@@ -98,7 +99,11 @@ class VirtualWorld(tk.Tk):
                                   font=MEDIUM_FONT)
 
         def current_user():
-            """ Get the current user """
+            """
+            Get the current user's name and balance.
+
+            :returns: a dict with 'username' and 'balance' as keys.
+            """
             nonlocal username
             username = User.get_current()['username']
             newest_balance = User.get_current()['balance']
@@ -106,7 +111,11 @@ class VirtualWorld(tk.Tk):
             return {"username": username, "balance": newest_balance}
 
         def toggle_entry():
-            """ Balance button toggling """
+            """
+            Toggle balance button.
+
+            :raises: ValueError: Balance not valid!
+            """
             nonlocal hidden
             newest_balance = current_user()["balance"]
             if self.balance == newest_balance:
@@ -163,10 +172,11 @@ class VirtualWorld(tk.Tk):
         back_button.image = back_img
 
     def back_button(self):
+        """ Raise the UserPage frame to the user's view. """
         self.controller.show_frame(UserPage)
 
     def logout(self):
-        """ Appending current_user.txt with a guest user """
+        """ Append current_user_file with a guest user then show LoginPage. """
         user = "Guest" + ',' + "None" + ',' + "50" + ',' + "1000000"
         with open(current_user_file, 'w') as f:
             f.write(user)
