@@ -1264,7 +1264,7 @@ class TechShopPage(tk.Frame):
         self.Logo = tk.PhotoImage(file="img/shops/tech/tech_logo.gif",
                                   height="120")
         self.tech_logo = tk.Label(self, image=self.Logo)
-        self.tech_logo.grid(row=0, rowspan=5, column=0, columnspan=16)
+        self.tech_logo.grid(row=0, rowspan=5, column=0, columnspan=16, padx=20)
 
         # Header
         menu_label = ttk.Label(self, text="Catalogue", font=LARGE_FONT)
@@ -1325,7 +1325,7 @@ class TechShopPage(tk.Frame):
         self.tv_amount.grid(row=16, column=10, columnspan=2, pady=10)
 
         # P.C. label, price and amount entry
-        self.pc_label = ttk.Label(self, text="pc", font=MEDIUM_FONT)
+        self.pc_label = ttk.Label(self, text="Computer", font=MEDIUM_FONT)
         self.pc_label.grid(row=17, column=1, columnspan=5, pady=10,
                            sticky="W")
         self.pc_price = ttk.Label(self, font=MEDIUM_FONT,
@@ -1575,7 +1575,7 @@ class TechShopPage(tk.Frame):
                     data[option] = value
                     if int(data[option]) > 0:
                         if option == 'tv':
-                            tech_type = option.title()
+                            tech_type = "Television"
                             price = "${:.2f}".format(int(data[option]) *
                                                      self.tv_cost)
                         elif option == 'camera':
@@ -1587,7 +1587,7 @@ class TechShopPage(tk.Frame):
                             price = "${:.2f}".format(int(data[option]) *
                                                      self.phone_cost)
                         elif option == 'pc':
-                            tech_type = option.title()
+                            tech_type = "Computer"
                             price = "${:.2f}".format(int(data[option]) *
                                                      self.pc_cost)
                         elif option == 'tablet':
