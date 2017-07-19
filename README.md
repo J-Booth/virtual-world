@@ -5,7 +5,7 @@ Settings with editable name, password, age and the ability to delete your user d
 
 ## Features in the works:
 
-Tech Shop and Pizza Shop
+Pizza Shop
 
 ## Features to be implemented:
 
