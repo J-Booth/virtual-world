@@ -1,0 +1,6 @@
+camera:0
+phone:0
+tv:0
+pc:0
+tablet:0
+total:0
