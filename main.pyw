@@ -43,7 +43,7 @@ class VirtualWorld(tk.Tk):
 
         self.frames = {}
         for file in (UserPage, LoginPage, SignupPage, SettingsPage, ShopPage,
-                     CoffeeShopPage):
+                     CoffeeShopPage, TechShopPage, PizzaShopPage):
             frame = file(container, self)
             self.frames[file] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -774,7 +774,8 @@ class ShopPage(tk.Frame):
         shops_label = ttk.Label(self, text="Shops", font=LARGE_FONT)
         shops_label.grid(row=14, rowspan=2, column=1, columnspan=11, pady=15)
 
-        # Buttons
+        # Buttons                   TODO Fix image sizes!
+        # Coffee Shop button
         coffee_img = tk.PhotoImage(file="img/shops/coffee/coffee_button.gif")
         coffee_button = tk.Button(self, relief="flat", width=180, height=40,
                                   image=coffee_img,
@@ -782,20 +783,20 @@ class ShopPage(tk.Frame):
         coffee_button.grid(row=18, column=1, columnspan=12)
         coffee_button.image = coffee_img
 
-        # tech shop image
-        tech_img = tk.PhotoImage(file="img/shops/coffee/coffee_button.gif")
+        # Tech Shop button
+        tech_img = tk.PhotoImage(file="img/shops/tech/tech_button.gif")
         tech_button = tk.Button(self, relief="flat", width=180, height=40,
-                                image=tech_img)
-        #                       command= lambda: shop_tech(self, ShopPage))
+                                image=tech_img,
+                                command=lambda: self.shop_tech())
         tech_button.grid(row=19, column=1, columnspan=12)
         tech_button.image = tech_img
 
-        # pizza shop image
-        pizza_img = tk.PhotoImage(file="img/shops/coffee/coffee_button.gif")
+        # Pizza Shop button
+        pizza_img = tk.PhotoImage(file="img/shops/pizza/pizza_button.gif")
         pizza_button = tk.Button(self, relief="flat", width=180, height=40,
-                                 image=pizza_img)
-        #                        command= lambda: shop_pizza(self, ShopPage))
-        pizza_button.grid(row=20, column=1, columnspan=12)
+                                 image=pizza_img,
+                                 command=lambda: self.shop_pizza())
+        pizza_button.grid(row=20, column=1, columnspan=13, padx=10)
         pizza_button.image = pizza_img
 
         VirtualWorld.menu_bar(self, controller)
@@ -808,13 +809,13 @@ class ShopPage(tk.Frame):
         """ Raise the CoffeeShopPage frame to the user's view. """
         self.controller.show_frame(CoffeeShopPage)
 
-    # def shop_tech(self):
-    # """ Raise the TechShopPage frame to the user's view. """
-    #     self.controller.show_frame(TechShopPage)
-    #
-    # def shop_pizza(self):
-    # """ Raise the PizzaShopPage frame to the user's view. """
-    #     self.controller.show_frame(PizzaShopPage)
+    def shop_tech(self):
+        """ Raise the TechShopPage frame to the user's view. """
+        self.controller.show_frame(TechShopPage)
+
+    def shop_pizza(self):
+        """ Raise the PizzaShopPage frame to the user's view. """
+        self.controller.show_frame(PizzaShopPage)
 
     def balance_button(self):
         # TODO: Fix this.
@@ -1186,6 +1187,839 @@ class CoffeeShopPage(tk.Frame):
 
                         count += 1
                         ttk.Label(self.toplevel, text=coffee_type)\
+                            .grid(row=count, column=0, columnspan=10)
+                        ttk.Label(self.toplevel, text=data[option])\
+                            .grid(row=count, column=10, columnspan=9)
+                        ttk.Label(self.toplevel, text=price)\
+                            .grid(row=count, column=20)
+
+            with open(current_user_file, 'r') as file:
+                if 'Guest,None,50,1000000' not in file:
+                    # Entries
+                    username_label = ttk.Label(self.toplevel, text="Username:",
+                                               font=SMALL_FONT)
+                    username_label.grid(row=9, column=7, columnspan=11, pady=5)
+                    self.toplevel.username = ttk.Entry(self.toplevel)
+                    self.toplevel.username.grid(row=10, sticky='W', padx=20,
+                                                column=9, columnspan=12)
+
+                    password_label = ttk.Label(self.toplevel, text="Password:",
+                                               font=SMALL_FONT)
+                    password_label.grid(row=11, column=7, columnspan=11,
+                                        pady=5)
+                    self.toplevel.password = ttk.Entry(self.toplevel, show="*")
+                    self.toplevel.password.grid(row=12, sticky="E", padx=20,
+                                                column=9, columnspan=12)
+
+            submit_command = (lambda: self.submit_button())
+            cancel_command = (lambda: self.remove_window())
+
+            # Buttons
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
+                                              command=submit_command)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
+
+            self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
+                                              command=cancel_command)
+            self.toplevel.cancel.grid(row=13, column=16, columnspan=6, pady=5)
+
+            # ERROR Labels
+            self.toplevel.user_info = ttk.Label(self.toplevel, text="",
+                                                font=SMALL_FONT)
+            self.toplevel.user_info.grid(row=14, column=8, columnspan=20)
+
+            w = 250  # width for toplevel
+            h = 335  # height for toplevel
+
+            # get screen width and height
+            ws = self.toplevel.winfo_screenwidth()  # width of the screen
+            hs = self.toplevel.winfo_screenheight()  # height of the screen
+
+            # calculate x and y coordinates for the Tk root window
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+
+            # set the dimensions of the screen and where it is placed
+            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
+            self.toplevel.mainloop()
+
+    def remove_window(self):
+        """ Remove the toplevel (order) window. """
+        self.toplevel.destroy()
+        self.toplevel = None
+
+
+class TechShopPage(tk.Frame):
+    camera_cost = 300.00
+    phone_cost = 500.00
+    tv_cost = 1200.00
+    pc_cost = 1000.00
+    tablet_cost = 800.00
+
+    def __init__(self, parent, controller):
+        """ Tech shop frame of Virtual World. """
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        # Header Image
+        self.Logo = tk.PhotoImage(file="img/shops/tech/tech_logo.gif",
+                                  height="120")
+        self.tech_logo = tk.Label(self, image=self.Logo)
+        self.tech_logo.grid(row=0, rowspan=5, column=0, columnspan=16, padx=20)
+
+        # Header
+        menu_label = ttk.Label(self, text="Catalogue", font=LARGE_FONT)
+        menu_label.grid(row=6, rowspan=2, column=0, columnspan=16, pady=15)
+
+        # Sub-headers
+        type_label = ttk.Label(self, text="Type", font=MEDIUM_FONT)
+        type_label.grid(row=8, column=1, pady=10, sticky="W")
+        price_label = ttk.Label(self, text="Price", font=MEDIUM_FONT)
+        price_label.grid(row=8, column=4, columnspan=3, pady=10)
+        amount_label = ttk.Label(self, text="Amount", font=MEDIUM_FONT)
+        amount_label.grid(row=8, column=8, columnspan=6, pady=10)
+
+        VirtualWorld.menu_bar(self, controller)
+
+        back_img = tk.PhotoImage(file="img/menu/back_button.gif")
+        back_button = tk.Button(self, relief="flat", width=80, height=40,
+                                image=back_img,
+                                command=lambda: self.back_button())
+        back_button.grid(row=22, column=10, columnspan=5, sticky="E")
+        back_button.image = back_img
+
+        # Tech type labels, prices and entries
+
+        # Camera label, price and amount entry
+        self.camera_label = ttk.Label(self, text="Camera", font=MEDIUM_FONT)
+        self.camera_label.grid(row=14, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.camera_price = ttk.Label(self, font=MEDIUM_FONT, text="${:.2f}"
+                                      .format(self.camera_cost))
+        self.camera_price.grid(row=14, column=4, columnspan=3, pady=10)
+        camera_vcmd = (self.register(self.confirm), '%P', '%S', 'camera')
+        self.camera_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=camera_vcmd)
+        self.camera_amount.grid(row=14, column=10, columnspan=2, pady=10)
+
+        # Phone label, price and amount entry
+        self.phone_label = ttk.Label(self, text="Phone", font=MEDIUM_FONT)
+        self.phone_label.grid(row=15, column=1, columnspan=5, pady=10,
+                              sticky="W")
+        self.phone_price = ttk.Label(self, font=MEDIUM_FONT,
+                                     text="${:.2f}".format(self.phone_cost))
+        self.phone_price.grid(row=15, column=4, columnspan=3, pady=10)
+        phone_vcmd = (self.register(self.confirm), '%P', '%S', 'phone')
+        self.phone_amount = ttk.Entry(self, validate="key", justify="center",
+                                      validatecommand=phone_vcmd)
+        self.phone_amount.grid(row=15, column=10, columnspan=2, pady=10)
+
+        # T.V. label, price and amount entry
+        self.tv_label = ttk.Label(self, text="Television", font=MEDIUM_FONT)
+        self.tv_label.grid(row=16, column=1, columnspan=5, pady=10, sticky="W")
+        self.tv_price = ttk.Label(self, font=MEDIUM_FONT,
+                                  text="${:.2f}".format(self.tv_cost))
+        self.tv_price.grid(row=16, column=4, columnspan=3, pady=10)
+        tv_vcmd = (self.register(self.confirm), '%P', '%S', 'tv')
+        self.tv_amount = ttk.Entry(self, validate="key", justify="center",
+                                   validatecommand=tv_vcmd)
+        self.tv_amount.grid(row=16, column=10, columnspan=2, pady=10)
+
+        # P.C. label, price and amount entry
+        self.pc_label = ttk.Label(self, text="Computer", font=MEDIUM_FONT)
+        self.pc_label.grid(row=17, column=1, columnspan=5, pady=10,
+                           sticky="W")
+        self.pc_price = ttk.Label(self, font=MEDIUM_FONT,
+                                  text="${:.2f}".format(self.pc_cost))
+        self.pc_price.grid(row=17, column=4, columnspan=3, pady=10)
+        pc_vcmd = (self.register(self.confirm), '%P', '%S', 'pc')
+        self.pc_amount = ttk.Entry(self, validate="key", justify="center",
+                                   validatecommand=pc_vcmd)
+        self.pc_amount.grid(row=17, column=10, columnspan=2, pady=10)
+
+        # Tablet label, price and amount entry
+        self.tablet_label = ttk.Label(self, text="Tablet", font=MEDIUM_FONT)
+        self.tablet_label.grid(row=18, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.tablet_price = ttk.Label(self, font=MEDIUM_FONT,
+                                      text="${:.2f}".format(self.tablet_cost))
+        self.tablet_price.grid(row=18, column=4, columnspan=3, pady=10)
+        tablet_vcmd = (self.register(self.confirm), '%P', '%S', 'tablet')
+        self.tablet_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=tablet_vcmd)
+        self.tablet_amount.grid(row=18, column=10, columnspan=2, pady=10)
+
+        # Maximum number of tech
+        self.amount_label = ttk.Label(self, font=SMALL_FONT, foreground="red",
+                                      text="Maximum of 9 of each tech type.")
+        self.amount_label.grid(row=19, column=1, columnspan=9)
+
+        # Total
+        total_label = ttk.Label(self, text="Total:", font=MEDIUM_FONT)
+        total_label.grid(row=20, column=1, sticky="W")
+        self.total_cost_label = ttk.Label(self, font=MEDIUM_FONT,
+                                          text="$0.00")
+        self.total_cost_label.grid(row=20, column=1, columnspan=6,
+                                   padx=10, sticky="E")
+
+        self.toplevel = None
+
+        # Buttons
+
+        # Erase button
+        self.erase_button = ttk.Button(self, text="Erase all",
+                                       command=lambda: self.erase())
+        self.erase_button.grid(row=19, column=9, columnspan=4, pady=5)
+
+        # Purchase Button
+        self.buy_img = tk.PhotoImage(file="img/shops/purchase_button.gif")
+        buy_window = (lambda: self.order())
+        self.buy_button = tk.Button(self, compound=tk.TOP, relief="flat",
+                                    width=80, height=40, image=self.buy_img,
+                                    command=buy_window, state='disabled')
+        self.buy_button.grid(row=20, column=7, columnspan=6, sticky="E",
+                             pady=5)
+        self.buy_button.image = self.buy_img
+
+        TechShopPage.reset_order_data()
+
+    def erase(self):
+        """ Remove all data from the order entries. """
+        for amount in (self.camera_amount, self.phone_amount,
+                       self.tv_amount, self.pc_amount,
+                       self.tablet_amount):
+            amount.delete(0, 1)
+            amount.insert(0, "")
+
+    def confirm(self, P, S, _type):
+        """
+        Only allow a 1 digit integer and if the total of all the entries
+        is greater than one, enable the cart button.
+
+        :param P: allowed value (%P).
+        :param S: text being inserted (%S).
+        :param _type: the tech type (str).
+        :returns: True - If value is valid.
+                 False - If input is invalid.
+        """
+        allowed_value = P  # So the values of P and S are understandable
+        inserted_value = S  # But are set as param so that %P and %S are used.
+
+        if len(allowed_value) == 0:
+            inserted_value = 0
+            allowed_value = "0"
+        else:
+            try:
+                inserted_value = int(inserted_value)
+            except ValueError:
+                print("Input is not an integer!")
+        if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
+            with open(TECH_DATA_F, 'r') as file:
+                current_data = [line.strip() for line in file]
+            data = {}
+            with open(TECH_DATA_F, 'r') as file:
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+            if data[_type] == str(allowed_value):
+                print("No changes to be made to {}".format(TECH_DATA_F))
+            else:
+                current_data.remove('{}:{}'.format(_type, data[_type]))
+                current_data.remove('{}:{}'.format('total', data['total']))
+                data[_type] = int(allowed_value)
+                data['total'] = 0
+                total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    item.pop(0)
+                    total += int(item[0])
+                data['total'] = total + data[_type]
+                current_data.append('{}:{}'.format(_type, data[_type]))
+                current_data.append('{}:{}'.format('total', data['total']))
+
+                camera_total = 0
+                phone_total = 0
+                tv_total = 0
+                pc_total = 0
+                tablet_total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    if item[0] == 'camera' and int(item[1]) > 0:
+                        camera_total = int(item[1]) * self.camera_cost
+                    elif item[0] == 'phone' and int(item[1]) > 0:
+                        phone_total = int(item[1]) * self.phone_cost
+                    elif item[0] == 'tv' and int(item[1]) > 0:
+                        tv_total = int(item[1]) * self.tv_cost
+                    elif item[0] == 'pc' and int(item[1]) > 0:
+                        pc_total = int(item[1]) * self.pc_cost
+                    elif item[0] == 'tablet' and int(item[1]) > 0:
+                        tablet_total = int(item[1]) * self.tablet_cost
+                new_total = camera_total + phone_total + \
+                    tv_total + pc_total + tablet_total
+
+            if int(data['total']) > 0:
+                self.total_cost_label.configure(text="${:.2f}"
+                                                .format(new_total))
+                self.buy_button.configure(state='normal')
+            else:
+                self.total_cost_label.configure(text="$0.00")
+                self.buy_button.configure(state='disabled')
+            with open(TECH_DATA_F, 'w') as file:
+                print("Writing new data to {}".format(TECH_DATA_F))
+                file.write('\n'.join(current_data))
+            return True
+        else:
+            self.bell()
+            return False
+
+    def back_button(self):
+        """ Raise the ShopPage frame to the user's view. """
+        self.controller.show_frame(ShopPage)
+
+    def submit_button(self):
+        """
+        Check user input and change the order window for the specified
+        user, where guests do not pay but all other users do.
+
+        :return: False - If user data is incorrect or if there is no data.
+        """
+        try:
+            username = self.toplevel.username.get()
+            password = self.toplevel.password.get()
+        except AttributeError:
+            username = "Guest"
+            password = "None"
+
+        name_and_pass = username + ',' + password
+        amount = float(self.total_cost_label.cget("text").strip('$'))
+        if name_and_pass == ',':
+            print("Nothing was entered!")
+            self.toplevel.user_info.configure(text="Nothing entered!",
+                                              foreground="red")
+            return False
+        elif Check.in_user_data(Check.all_user_data(name_and_pass)):
+            print("User '{}' Exists!".format(username))
+            self.toplevel.user_info.configure(text="")
+            purchase = (lambda: self.purchase(username, amount))
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Confirm",
+                                              command=purchase)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
+        else:
+            self.toplevel.error_label = ttk.Label(
+                self.toplevel, text="Incorrect username/password",
+                foreground="red")
+            self.toplevel.error_label.grid(row=14, column=9, columnspan=20)
+            return False
+
+    def purchase(self, username, amount):
+        """
+        Check the user is not a guest and then withdraw the amount from the
+        user's account. Reset the order_data_file if the transaction is
+        successful.
+        """
+        if username == 'Guest':
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            TechShopPage.reset_order_data()
+        elif User.withdraw(username, amount) is True:
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            TechShopPage.reset_order_data()
+        elif User.withdraw(username, amount) == "inadequate_funds":
+            self.toplevel.user_info.configure(text="Inadequate funds",
+                                              foreground="red")
+        else:
+            self.toplevel.user_info.configure(text="Transaction failed",
+                                              foreground="red")
+        self.toplevel.user_info.after(2500, lambda: self.remove_window())
+
+    @staticmethod
+    def reset_order_data():
+        """ Reset the TECH_DATA_F file. """
+        order_data = ['camera', 'phone', 'tv', 'pc', 'tablet', 'total']
+        new_data = []
+        with open(TECH_DATA_F, 'w') as file:
+            for data in order_data:
+                new_data.append('{}:0'.format(data))
+            file.write('\n'.join(new_data))
+
+    def order(self):
+        """
+        Create the order window (which displays the user's order) and display
+        the correct amounts and totals for the user's order.
+        """
+        if self.toplevel is None:
+            self.toplevel = tk.Toplevel(self)
+            self.toplevel.protocol('WM_DELETE_WINDOW',
+                                   lambda: self.remove_window())
+            self.toplevel.focus_set()
+            self.toplevel.resizable(width=False, height=False)
+            self.toplevel.title('Order')
+
+            order_label = ttk.Label(self.toplevel, text="Here is your order:",
+                                    font=MEDIUM_FONT)
+            order_label.grid(row=0, column=0, columnspan=20, padx=5, pady=5)
+            type_label = ttk.Label(self.toplevel, text="Type", font=SMALL_FONT)
+            type_label.grid(row=2, column=0, columnspan=10, pady=10, padx=5)
+            price_label = ttk.Label(self.toplevel, text="Amount",
+                                    font=SMALL_FONT)
+            price_label.grid(row=2, column=10, columnspan=9, pady=10)
+            amount_label = ttk.Label(self.toplevel, text="Price",
+                                     font=SMALL_FONT)
+            amount_label.grid(row=2, column=20, pady=10)
+
+            data = {}
+            with open(TECH_DATA_F, 'r') as file:
+                count = 2
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+                    if int(data[option]) > 0:
+                        if option == 'tv':
+                            tech_type = "Television"
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.tv_cost)
+                        elif option == 'camera':
+                            tech_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.camera_cost)
+                        elif option == 'phone':
+                            tech_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.phone_cost)
+                        elif option == 'pc':
+                            tech_type = "Computer"
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.pc_cost)
+                        elif option == 'tablet':
+                            tech_type = option.title()
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.tablet_cost)
+                        elif option == 'total':
+                            tech_type = option.title()
+                            price = self.total_cost_label.cget("text")
+                        else:
+                            tech_type = option
+                            price = ""
+
+                        count += 1
+                        ttk.Label(self.toplevel, text=tech_type)\
+                            .grid(row=count, column=0, columnspan=10)
+                        ttk.Label(self.toplevel, text=data[option])\
+                            .grid(row=count, column=10, columnspan=9)
+                        ttk.Label(self.toplevel, text=price)\
+                            .grid(row=count, column=20)
+
+            with open(current_user_file, 'r') as file:
+                if 'Guest,None,50,1000000' not in file:
+                    # Entries
+                    username_label = ttk.Label(self.toplevel, text="Username:",
+                                               font=SMALL_FONT)
+                    username_label.grid(row=9, column=7, columnspan=11, pady=5)
+                    self.toplevel.username = ttk.Entry(self.toplevel)
+                    self.toplevel.username.grid(row=10, sticky='W', padx=20,
+                                                column=9, columnspan=12)
+
+                    password_label = ttk.Label(self.toplevel, text="Password:",
+                                               font=SMALL_FONT)
+                    password_label.grid(row=11, column=7, columnspan=11,
+                                        pady=5)
+                    self.toplevel.password = ttk.Entry(self.toplevel, show="*")
+                    self.toplevel.password.grid(row=12, sticky="E", padx=20,
+                                                column=9, columnspan=12)
+
+            submit_command = (lambda: self.submit_button())
+            cancel_command = (lambda: self.remove_window())
+
+            # Buttons
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
+                                              command=submit_command)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
+
+            self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
+                                              command=cancel_command)
+            self.toplevel.cancel.grid(row=13, column=16, columnspan=6, pady=5)
+
+            # ERROR Labels
+            self.toplevel.user_info = ttk.Label(self.toplevel, text="",
+                                                font=SMALL_FONT)
+            self.toplevel.user_info.grid(row=14, column=8, columnspan=20)
+
+            w = 250  # width for toplevel
+            h = 335  # height for toplevel
+
+            # get screen width and height
+            ws = self.toplevel.winfo_screenwidth()  # width of the screen
+            hs = self.toplevel.winfo_screenheight()  # height of the screen
+
+            # calculate x and y coordinates for the Tk root window
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+
+            # set the dimensions of the screen and where it is placed
+            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
+            self.toplevel.mainloop()
+
+    def remove_window(self):
+        """ Remove the toplevel (order) window. """
+        self.toplevel.destroy()
+        self.toplevel = None
+
+
+class PizzaShopPage(tk.Frame):
+    meat_cost = 5.00
+    cheese_cost = 5.00
+    pepperoni_cost = 5.00
+    hawaiian_cost = 5.00
+    seafood_cost = 5.00
+
+    def __init__(self, parent, controller):
+        """ Pizza shop frame of Virtual World. """
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        # Header Image
+        self.Logo = tk.PhotoImage(file="img/shops/pizza/pizza_logo.gif",
+                                  height="120")
+        self.pizza_logo = tk.Label(self, image=self.Logo)
+        self.pizza_logo.grid(row=0, rowspan=5, column=0, columnspan=16, padx=10)
+
+        # Header
+        menu_label = ttk.Label(self, text="Menu", font=LARGE_FONT)
+        menu_label.grid(row=6, rowspan=2, column=0, columnspan=16, pady=15)
+
+        # Sub-headers
+        type_label = ttk.Label(self, text="Type", font=MEDIUM_FONT)
+        type_label.grid(row=8, column=1, pady=10, sticky="W")
+        price_label = ttk.Label(self, text="Price", font=MEDIUM_FONT)
+        price_label.grid(row=8, column=4, columnspan=3, pady=10)
+        amount_label = ttk.Label(self, text="Amount", font=MEDIUM_FONT)
+        amount_label.grid(row=8, column=8, columnspan=6, pady=10)
+
+        VirtualWorld.menu_bar(self, controller)
+
+        back_img = tk.PhotoImage(file="img/menu/back_button.gif")
+        back_button = tk.Button(self, relief="flat", width=80, height=40,
+                                image=back_img,
+                                command=lambda: self.back_button())
+        back_button.grid(row=22, column=10, columnspan=5, sticky="E")
+        back_button.image = back_img
+
+        # Pizza type labels, prices and entries
+
+        # Meat lovers label, price and amount entry
+        self.meat_label = ttk.Label(self, text="Meat lovers", font=MEDIUM_FONT)
+        self.meat_label.grid(row=14, column=1, columnspan=5, pady=10,
+                             sticky="W")
+        self.meat_price = ttk.Label(self, font=MEDIUM_FONT, text="${:.2f}"
+                                    .format(self.meat_cost))
+        self.meat_price.grid(row=14, column=4, columnspan=3, pady=10)
+        meat_vcmd = (self.register(self.confirm), '%P', '%S', 'meat')
+        self.meat_amount = ttk.Entry(self, validate="key", justify="center",
+                                     validatecommand=meat_vcmd)
+        self.meat_amount.grid(row=14, column=10, columnspan=2, pady=10)
+
+        # Cheese label, price and amount entry
+        self.cheese_label = ttk.Label(self, text="Cheese", font=MEDIUM_FONT)
+        self.cheese_label.grid(row=15, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.cheese_price = ttk.Label(self, font=MEDIUM_FONT,
+                                      text="${:.2f}".format(self.cheese_cost))
+        self.cheese_price.grid(row=15, column=4, columnspan=3, pady=10)
+        cheese_vcmd = (self.register(self.confirm), '%P', '%S', 'cheese')
+        self.cheese_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=cheese_vcmd)
+        self.cheese_amount.grid(row=15, column=10, columnspan=2, pady=10)
+
+        # Pepperoni label, price and amount entry
+        self.pepperoni_label = ttk.Label(self, text="Pepperoni",
+                                         font=MEDIUM_FONT)
+        self.pepperoni_label.grid(row=16, column=1, columnspan=5, pady=10,
+                                  sticky="W")
+        self.pepperoni_price = ttk.Label(self, font=MEDIUM_FONT,
+                                         text="${:.2f}".format(
+                                             self.pepperoni_cost))
+        self.pepperoni_price.grid(row=16, column=4, columnspan=3, pady=10)
+        pepperoni_vcmd = (self.register(self.confirm), '%P', '%S', 'pepperoni')
+        self.pepperoni_amount = ttk.Entry(self, validate="key",
+                                          justify="center",
+                                          validatecommand=pepperoni_vcmd)
+        self.pepperoni_amount.grid(row=16, column=10, columnspan=2, pady=10)
+
+        # Hawaiian label, price and amount entry
+        self.hawaii_label = ttk.Label(self, text="Hawaiian", font=MEDIUM_FONT)
+        self.hawaii_label.grid(row=17, column=1, columnspan=5, pady=10,
+                               sticky="W")
+        self.hawaii_price = ttk.Label(self, font=MEDIUM_FONT,
+                                      text="${:.2f}".format(
+                                          self.hawaiian_cost))
+        self.hawaii_price.grid(row=17, column=4, columnspan=3, pady=10)
+        hawaii_vcmd = (self.register(self.confirm), '%P', '%S', 'hawaiian')
+        self.hawaii_amount = ttk.Entry(self, validate="key", justify="center",
+                                       validatecommand=hawaii_vcmd)
+        self.hawaii_amount.grid(row=17, column=10, columnspan=2, pady=10)
+
+        # Mocha label, price and amount entry
+        self.seafood_label = ttk.Label(self, text="Seafood", font=MEDIUM_FONT)
+        self.seafood_label.grid(row=18, column=1, columnspan=5, pady=10,
+                                sticky="W")
+        self.seafood_price = ttk.Label(self, font=MEDIUM_FONT,
+                                       text="${:.2f}".format(self.seafood_cost))
+        self.seafood_price.grid(row=18, column=4, columnspan=3, pady=10)
+        seafood_vcmd = (self.register(self.confirm), '%P', '%S', 'seafood')
+        self.seafood_amount = ttk.Entry(self, validate="key", justify="center",
+                                        validatecommand=seafood_vcmd)
+        self.seafood_amount.grid(row=18, column=10, columnspan=2, pady=10)
+
+        # Maximum number of pizzas
+        self.amount_label = ttk.Label(self, font=SMALL_FONT, foreground="red",
+                                      text="Maximum of 9 of each pizza type.")
+        self.amount_label.grid(row=19, column=1, columnspan=9)
+
+        # Total
+        total_label = ttk.Label(self, text="Total:", font=MEDIUM_FONT)
+        total_label.grid(row=20, column=1, sticky="W")
+        self.total_cost_label = ttk.Label(self, font=MEDIUM_FONT,
+                                          text="$0.00")
+        self.total_cost_label.grid(row=20, column=1, columnspan=6,
+                                   padx=10, sticky="E")
+
+        self.toplevel = None
+
+        # Buttons
+
+        # Erase button
+        self.erase_button = ttk.Button(self, text="Erase all",
+                                       command=lambda: self.erase())
+        self.erase_button.grid(row=19, column=9, columnspan=4, pady=5)
+
+        # Purchase Button
+        self.buy_img = tk.PhotoImage(file="img/shops/purchase_button.gif")
+        buy_window = (lambda: self.order())
+        self.buy_button = tk.Button(self, compound=tk.TOP, relief="flat",
+                                    width=80, height=40, image=self.buy_img,
+                                    command=buy_window, state='disabled')
+        self.buy_button.grid(row=20, column=7, columnspan=6, sticky="E",
+                             pady=5)
+        self.buy_button.image = self.buy_img
+
+        PizzaShopPage.reset_order_data()
+
+    def erase(self):
+        """ Remove all data from the order entries. """
+        for amount in (self.meat_amount, self.cheese_amount,
+                       self.pepperoni_amount, self.hawaii_amount,
+                       self.seafood_amount):
+            amount.delete(0, 1)
+            amount.insert(0, "")
+
+    def confirm(self, P, S, _type):
+        """
+        Only allow a 1 digit integer and if the total of all the entries
+        is greater than one, enable the cart button.
+
+        :param P: allowed value (%P).
+        :param S: text being inserted (%S).
+        :param _type: the pizza type (str).
+        :returns: True - If value is valid.
+                 False - If input is invalid.
+        """
+        allowed_value = P  # So the values of P and S are understandable
+        inserted_value = S  # But are set as param so that %P and %S are used.
+
+        if len(allowed_value) == 0:
+            inserted_value = 0
+            allowed_value = "0"
+        else:
+            try:
+                inserted_value = int(inserted_value)
+            except ValueError:
+                print("Input is not an integer!")
+        if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
+            with open(PIZZA_DATA_F, 'r') as file:
+                current_data = [line.strip() for line in file]
+            data = {}
+            with open(PIZZA_DATA_F, 'r') as file:
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+            if data[_type] == str(allowed_value):
+                print("No changes to be made to {}".format(PIZZA_DATA_F))
+            else:
+                current_data.remove('{}:{}'.format(_type, data[_type]))
+                current_data.remove('{}:{}'.format('total', data['total']))
+                data[_type] = int(allowed_value)
+                data['total'] = 0
+                total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    item.pop(0)
+                    total += int(item[0])
+                data['total'] = total + data[_type]
+                current_data.append('{}:{}'.format(_type, data[_type]))
+                current_data.append('{}:{}'.format('total', data['total']))
+
+                meat_total = 0
+                cheese_total = 0
+                pepperoni_total = 0
+                hawaiian_total = 0
+                seafood_total = 0
+                for item in current_data:
+                    item = item.split(':')
+                    if item[0] == 'meat' and int(item[1]) > 0:
+                        meat_total = int(item[1]) * self.meat_cost
+                    elif item[0] == 'cheese' and int(item[1]) > 0:
+                        cheese_total = int(item[1]) * self.cheese_cost
+                    elif item[0] == 'pepperoni' and int(item[1]) > 0:
+                        pepperoni_total = int(item[1]) * self.pepperoni_cost
+                    elif item[0] == 'hawaiian' and int(item[1]) > 0:
+                        hawaiian_total = int(item[1]) * self.hawaiian_cost
+                    elif item[0] == 'seafood' and int(item[1]) > 0:
+                        seafood_total = int(item[1]) * self.seafood_cost
+                new_total = meat_total + cheese_total + pepperoni_total + \
+                    hawaiian_total + seafood_total
+
+            if int(data['total']) > 0:
+                self.total_cost_label.configure(text="${:.2f}"
+                                                .format(new_total))
+                self.buy_button.configure(state='normal')
+            else:
+                self.total_cost_label.configure(text="$0.00")
+                self.buy_button.configure(state='disabled')
+            with open(PIZZA_DATA_F, 'w') as file:
+                print("Writing new data to {}".format(PIZZA_DATA_F))
+                file.write('\n'.join(current_data))
+            return True
+        else:
+            self.bell()
+            return False
+
+    def back_button(self):
+        """ Raise the ShopPage frame to the user's view. """
+        self.controller.show_frame(ShopPage)
+
+    def submit_button(self):
+        """
+        Check user input and change the order window for the specified
+        user, where guests do not pay but all other users do.
+
+        :return: False - If user data is incorrect or if there is no data.
+        """
+        try:
+            username = self.toplevel.username.get()
+            password = self.toplevel.password.get()
+        except AttributeError:
+            username = "Guest"
+            password = "None"
+
+        name_and_pass = username + ',' + password
+        amount = float(self.total_cost_label.cget("text").strip('$'))
+        if name_and_pass == ',':
+            print("Nothing was entered!")
+            self.toplevel.user_info.configure(text="Nothing entered!",
+                                              foreground="red")
+            return False
+        elif Check.in_user_data(Check.all_user_data(name_and_pass)):
+            print("User '{}' Exists!".format(username))
+            self.toplevel.user_info.configure(text="")
+            purchase = (lambda: self.purchase(username, amount))
+            self.toplevel.submit = ttk.Button(self.toplevel, text="Confirm",
+                                              command=purchase)
+            self.toplevel.submit.grid(row=13, column=6, columnspan=10, pady=5)
+        else:
+            self.toplevel.error_label = ttk.Label(
+                self.toplevel, text="Incorrect username/password",
+                foreground="red")
+            self.toplevel.error_label.grid(row=14, column=9, columnspan=20)
+            return False
+
+    def purchase(self, username, amount):
+        """
+        Check the user is not a guest and then withdraw the amount from the
+        user's account. Reset the order_data_file if the transaction is
+        successful.
+        """
+        if username == 'Guest':
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            PizzaShopPage.reset_order_data()
+        elif User.withdraw(username, amount) is True:
+            self.toplevel.user_info.configure(text="Transaction successful",
+                                              foreground="green")
+            PizzaShopPage.reset_order_data()
+        elif User.withdraw(username, amount) == "inadequate_funds":
+            self.toplevel.user_info.configure(text="Inadequate funds",
+                                              foreground="red")
+        else:
+            self.toplevel.user_info.configure(text="Transaction failed",
+                                              foreground="red")
+        self.toplevel.user_info.after(2500, lambda: self.remove_window())
+
+    @staticmethod
+    def reset_order_data():
+        """ Reset the PIZZA_DATA_F file. """
+        order_data = ['meat', 'cheese', 'pepperoni', 'hawaiian', 'seafood',
+                      'total']
+        new_data = []
+        with open(PIZZA_DATA_F, 'w') as file:
+            for data in order_data:
+                new_data.append('{}:0'.format(data))
+            file.write('\n'.join(new_data))
+
+    def order(self):
+        """
+        Create the order window (which displays the user's order) and display
+        the correct amounts and totals for the user's order.
+        """
+        if self.toplevel is None:
+            self.toplevel = tk.Toplevel(self)
+            self.toplevel.protocol('WM_DELETE_WINDOW',
+                                   lambda: self.remove_window())
+            self.toplevel.focus_set()
+            self.toplevel.resizable(width=False, height=False)
+            self.toplevel.title('Order')
+
+            order_label = ttk.Label(self.toplevel, text="Here is your order:",
+                                    font=MEDIUM_FONT)
+            order_label.grid(row=0, column=0, columnspan=20, padx=5, pady=5)
+            type_label = ttk.Label(self.toplevel, text="Type", font=SMALL_FONT)
+            type_label.grid(row=2, column=0, columnspan=10, pady=10, padx=5)
+            price_label = ttk.Label(self.toplevel, text="Amount",
+                                    font=SMALL_FONT)
+            price_label.grid(row=2, column=10, columnspan=9, pady=10)
+            amount_label = ttk.Label(self.toplevel, text="Price",
+                                     font=SMALL_FONT)
+            amount_label.grid(row=2, column=20, pady=10)
+
+            data = {}
+            with open(PIZZA_DATA_F, 'r') as file:
+                count = 2
+                for line in file:
+                    option, value = line.strip().split(':')
+                    data[option] = value
+                    if int(data[option]) > 0:
+                        if option == 'meat':
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.meat_cost)
+                        elif option == 'cheese':
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.cheese_cost)
+                        elif option == 'pepperoni':
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.pepperoni_cost)
+                        elif option == 'hawaiian':
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.hawaiian_cost)
+                        elif option == 'seafood':
+                            price = "${:.2f}".format(int(data[option]) *
+                                                     self.seafood_cost)
+                        elif option == 'total':
+                            price = self.total_cost_label.cget("text")
+                        else:
+                            price = ""
+                        pizza_type = option.title()
+                        count += 1
+                        ttk.Label(self.toplevel, text=pizza_type)\
                             .grid(row=count, column=0, columnspan=10)
                         ttk.Label(self.toplevel, text=data[option])\
                             .grid(row=count, column=10, columnspan=9)
