@@ -3,7 +3,9 @@ This program is a tkinter GUI that allows the user to save a login to a text fil
 
 ## Current features:
 User logins
+
 Settings
+
 Shops: Coffee, Tech and Pizza
 
 ## Features in the works:
