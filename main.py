@@ -183,7 +183,7 @@ class LoginPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        # Header Image
+        # Header image
         self.Logo = tk.PhotoImage(file="img/logo.gif")
         self.login_page_logo = tk.Label(self, image=self.Logo)
         self.login_page_logo.grid(row=0, rowspan=12, column=0, columnspan=16)
@@ -209,9 +209,9 @@ class LoginPage(tk.Frame):
         # Error labels
         self.error_label = ttk.Label(self, text="")
         self.error_label.grid(row=16, column=10, columnspan=3)
-        self.error_label2 = ttk.Label(self, text="")
-        self.error_label2.grid(row=17, column=10, columnspan=6, padx=10,
-                               sticky="W")
+        self.error_label_2 = ttk.Label(self, text="")
+        self.error_label_2.grid(row=17, column=10, columnspan=6, padx=10,
+                                sticky="W")
 
         # Buttons
 
@@ -255,35 +255,33 @@ class LoginPage(tk.Frame):
         password = self.password.get()
         name_and_pass = username + ',' + password
         full_user_data = Check.all_user_data(name_and_pass)
-        print(name_and_pass)
-        if username == '':
-            if username == '' and password == '':
         # Attempt to get all of the user's data if user in the user_data_file
+        if username == "":
+            if username == "" and password == "":
                 print("Entering nothing will not work.")
             else:
                 print("You must enter a username.")
             self.error_label.configure(text="Incorrect", foreground="red")
-            self.error_label2.configure(text="Username/Password",
-                                        foreground="red")
+            self.error_label_2.configure(text="Username/Password",
+                                         foreground="red")
             return False
         elif Check.in_user_data(full_user_data):
             with open(current_user_file, 'w') as f:
                 f.write(full_user_data)
             self.error_label.configure(text="User", foreground="green")
-            self.error_label2.configure(text="Accepted!", foreground="green")
+            self.error_label_2.configure(text="Accepted!", foreground="green")
             success_command = (lambda: self.controller.show_frame(UserPage))
-            self.error_label2.after(1250, success_command)
+            self.error_label_2.after(1250, success_command)
             print("User '{}' Exists!".format(self.username.get()))
         else:
             print("Incorrect Username/Password")
             self.error_label.configure(text="Incorrect", foreground="red")
-            self.error_label2.configure(text="Username/Password",
-                                        foreground="red")
+            self.error_label_2.configure(text="Username/Password",
+                                         foreground="red")
             return False
 
     def guest_button(self):
         """" Take the user (without a login) to the user homepage. """
-        print('guest button')
         with open(current_user_file, 'w') as f:
             f.write('Guest,None,50,1000000')
         self.controller.show_frame(UserPage)
@@ -436,7 +434,6 @@ class UserPage(tk.Frame):
         task_button.grid(row=20, column=1, columnspan=11)
         task_button.image = task_img
 
-        VirtualWorld.menu_bar(self, controller)
         # Back button
         back_img = tk.PhotoImage(file="img/menu/back_button.gif")
         back_button = tk.Button(self, relief="flat", width=80, height=40,
@@ -444,6 +441,8 @@ class UserPage(tk.Frame):
                                 command=lambda: self.back_button())
         back_button.grid(row=22, column=10, columnspan=5, sticky="E")
         back_button.image = back_img
+
+        VirtualWorld.menu_bar(self, controller)
 
     def shops_button(self):
         """ Raise the ShopPage frame to the user's view. """
@@ -547,8 +546,6 @@ class SettingsPage(tk.Frame):
             if 'Guest,None,50,1000000' in list(current_user):
                 print('Guest users cannot change their information!')
                 return False
-            else:
-                pass
 
             self.toplevel = tk.Toplevel(self)
             self.toplevel.protocol('WM_DELETE_WINDOW',
