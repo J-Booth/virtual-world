@@ -479,7 +479,7 @@ class SettingsPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        # Header Image
+        # Header image
         self.Logo = tk.PhotoImage(file="img/logo.gif")
         self.settings_page_logo = tk.Label(self, image=self.Logo)
         self.settings_page_logo.grid(row=0, rowspan=12, column=0,
@@ -490,6 +490,8 @@ class SettingsPage(tk.Frame):
         shops_label.grid(row=14, rowspan=2, column=1, columnspan=11, pady=12)
 
         # Buttons
+
+        # Name change button
         name_change_link = "img/settings/change_name.gif"
         name_change_img = tk.PhotoImage(file=name_change_link)
         name_window = (lambda: self.open_window("Name"))
@@ -499,6 +501,7 @@ class SettingsPage(tk.Frame):
         name_change_button.grid(row=18, column=1, columnspan=11)
         name_change_button.image = name_change_img
 
+        # Password change button
         pwd_change_link = "img/settings/change_password.gif"
         pwd_change_img = tk.PhotoImage(file=pwd_change_link)
         pwd_window = (lambda: self.open_window("Password"))
@@ -508,6 +511,7 @@ class SettingsPage(tk.Frame):
         pwd_change_button.grid(row=19, column=1, columnspan=11)
         pwd_change_button.image = pwd_change_img
 
+        # Age change button
         age_change_link = "img/settings/change_age.gif"
         age_change_img = tk.PhotoImage(file=age_change_link)
         age_window = (lambda: self.open_window("Age"))
@@ -517,6 +521,7 @@ class SettingsPage(tk.Frame):
         age_change_button.grid(row=20, column=1, columnspan=11)
         age_change_button.image = age_change_img
 
+        # Delete button
         del_user_link = "img/settings/delete_user.gif"
         del_user_img = tk.PhotoImage(file=del_user_link)
         del_window = (lambda: self.open_window("Delete"))
@@ -525,16 +530,17 @@ class SettingsPage(tk.Frame):
         del_user_button.grid(row=21, column=1, columnspan=11)
         del_user_button.image = del_user_img
 
-        self.toplevel = None
-
-        VirtualWorld.menu_bar(self, controller)
-
+        # Back button
         back_img = tk.PhotoImage(file="img/menu/back_button.gif")
         back_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=back_img,
                                 command=lambda: self.back_button())
         back_button.grid(row=22, column=10, columnspan=5, sticky="E")
         back_button.image = back_img
+
+        VirtualWorld.menu_bar(self, controller)
+
+        self.toplevel = None
 
     def open_window(self, setting):
         """
@@ -559,49 +565,53 @@ class SettingsPage(tk.Frame):
             self.toplevel.setting = setting
             self.toplevel.title(setting)
 
-            # Entries
+            # Username and password labels and entries
+
+            # Username label and entry
             username_label = ttk.Label(self.toplevel, text="Username:",
                                        font=MEDIUM_FONT)
             username_label.grid(row=0, column=0, sticky="W", pady=5, padx=12)
             self.toplevel.username = ttk.Entry(self.toplevel)
             self.toplevel.username.grid(row=1, column=0, padx=15)
 
+            # Password label and entry
             password_label = ttk.Label(self.toplevel, text="Password:",
                                        font=MEDIUM_FONT)
             password_label.grid(row=2, column=0, sticky="W", pady=5, padx=12)
             self.toplevel.password = ttk.Entry(self.toplevel, show="*")
             self.toplevel.password.grid(row=3, column=0, padx=15)
 
-            submit_command = (lambda: self.submit_button())
-            cancel_command = (lambda: self.remove_window())
-
             # Buttons
+
+            # Submit button
+            submit_command = (lambda: self.submit_button())
             self.toplevel.submit = ttk.Button(self.toplevel, text="Submit",
                                               command=submit_command)
             self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
                                       padx=3)
 
+            # Cancel button
+            cancel_command = (lambda: self.remove_window())
             self.toplevel.cancel = ttk.Button(self.toplevel, text="Cancel",
                                               command=cancel_command)
             self.toplevel.cancel.grid(row=6, column=0, sticky="E", pady=5)
 
-            # ERROR Labels
+            # Error label
             self.toplevel.user_info = ttk.Label(self.toplevel, text="",
                                                 font=MEDIUM_FONT)
             self.toplevel.user_info.grid(row=8, column=0)
 
-            w = 157  # width for toplevel
-            h = 220  # height for toplevel
+            w = 157  # Width for toplevel
+            h = 220  # Height for toplevel
 
-            # get screen width and height
-            ws = self.toplevel.winfo_screenwidth()  # width of the screen
-            hs = self.toplevel.winfo_screenheight()  # height of the screen
+            ws = self.toplevel.winfo_screenwidth()  # Width of the screen
+            hs = self.toplevel.winfo_screenheight()  # Height of the screen
 
-            # calculate x and y coordinates for the Tk root window
+            # Calculate x and y coordinates for the Tk root window
             x = (ws / 2) - (w / 2)
             y = (hs / 2) - (h / 2)
 
-            # set the dimensions of the screen and where it is placed
+            # Set the dimensions of the screen and where it is placed
             self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y - 30))
             self.toplevel.mainloop()
 
@@ -640,18 +650,20 @@ class SettingsPage(tk.Frame):
         elif Check.in_user_data(Check.all_user_data(user_info)):
             print("User '{}' Exists!".format(username))
             if self.toplevel.setting == "Name":
+                # New user label and entry
                 new_name_label = ttk.Label(self.toplevel, font=MEDIUM_FONT,
                                            text=" New Username:")
                 new_name_label.grid(row=4, column=0, sticky="W", pady=5,
                                     padx=7)
                 new_name = ttk.Entry(self.toplevel)
                 new_name.grid(row=5, column=0)
+                # Change name button
                 self.toplevel.submit = ttk.Button(self.toplevel, text="Change",
                                                   command=change_name)
                 self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
                                           padx=3)
-
             elif self.toplevel.setting == "Password":
+                # New password label and entry
                 new_password_label = ttk.Label(self.toplevel,
                                                text="New Password:",
                                                font=MEDIUM_FONT)
@@ -659,31 +671,30 @@ class SettingsPage(tk.Frame):
                                         padx=12)
                 new_password = ttk.Entry(self.toplevel)
                 new_password.grid(row=5, column=0)
+                # Change password button
                 self.toplevel.submit = ttk.Button(self.toplevel, text="Change",
                                                   command=change_pwd)
                 self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
                                           padx=3)
-
             elif self.toplevel.setting == "Age":
+                # New age label and entry
                 new_age_label = ttk.Label(self.toplevel, text="New Age:",
                                           font=MEDIUM_FONT)
                 new_age_label.grid(row=4, column=0, sticky="W", pady=5,
                                    padx=12)
                 self.toplevel.new_age = ttk.Entry(self.toplevel)
                 self.toplevel.new_age.grid(row=5, column=0)
+                # Change age button
                 self.toplevel.submit = ttk.Button(self.toplevel, text="Change",
                                                   command=change_age)
                 self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
                                           padx=3)
-
             elif self.toplevel.setting == "Delete":
                 delete_button = ttk.Button(self.toplevel, text="Delete User",
                                            command=del_user)
                 delete_button.grid(row=6, column=0, sticky="W", pady=5, padx=3)
-
             else:
                 raise NameError("Setting name is invalid!")
-
         else:
             print("User does not exist!")
             return False
@@ -696,6 +707,7 @@ class SettingsPage(tk.Frame):
         :param new_name: This is user's new name (str).
         """
         if Check.username(new_name):
+            # Success label
             success_label = ttk.Label(self.toplevel, text="Username Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
@@ -705,6 +717,7 @@ class SettingsPage(tk.Frame):
             User.name_change(old_name, new_name)
             success_label.after(2500, lambda: self.remove_window())
         else:
+            # Failure label
             failure_label = ttk.Label(self.toplevel, text="Username Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
@@ -717,6 +730,7 @@ class SettingsPage(tk.Frame):
         :param new_password: This is user's new password (str).
         """
         if Check.password(new_password):
+            # Success label
             success_label = ttk.Label(self.toplevel, text="Password Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
@@ -726,6 +740,7 @@ class SettingsPage(tk.Frame):
             User.password_change(username, new_password)
             success_label.after(2500, lambda: self.remove_window())
         else:
+            # Failure label
             failure_label = ttk.Label(self.toplevel, text="Password Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
@@ -738,17 +753,17 @@ class SettingsPage(tk.Frame):
         :param new_age: This is user's new age (str).
         """
         if Check.age(new_age):
+            # Success label
             success_label = ttk.Label(self.toplevel, text="Age Accepted!",
                                       foreground="green")
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-            print("Changing age...")
             username = self.toplevel.username.get()
+            print("Changing age...")
             User.age_change(username, new_age)
-
             success_label.after(2500, lambda: self.remove_window())
-
         else:
+            # Failure label
             failure_label = ttk.Label(self.toplevel, text="Age Declined!",
                                       foreground="red")
             failure_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
@@ -759,6 +774,7 @@ class SettingsPage(tk.Frame):
 
         :param username: This is user's login name (str).
         """
+        # Success label
         success_label = ttk.Label(self.toplevel, text="Deleting user...",
                                   foreground="green")
         success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
