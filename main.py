@@ -199,18 +199,21 @@ class LoginPage(tk.Frame):
         login_label = ttk.Label(self, text="Login", font=LARGE_FONT)
         login_label.grid(row=14, rowspan=2, column=5, columnspan=6, pady=15)
 
-        # Sign in Labels and Entries
+        # Sign in labels and entries
+
+        # Username label and entry
         username_label = ttk.Label(self, text="Username:", font=MEDIUM_FONT)
         username_label.grid(row=16, column=5, columnspan=5, sticky="W")
         self.username = ttk.Entry(self)
         self.username.grid(row=16, column=9, sticky="e")
 
+        # Password label and entry
         password_label = ttk.Label(self, text="Password:", font=MEDIUM_FONT)
         password_label.grid(row=17, column=5, columnspan=5, sticky="W")
         self.password = ttk.Entry(self, show="*")
         self.password.grid(row=17, column=9, sticky="e")
 
-        # ERROR Labels
+        # Error labels
         self.error_label = ttk.Label(self, text="")
         self.error_label.grid(row=16, column=10, columnspan=3)
         self.error_label2 = ttk.Label(self, text="")
@@ -218,6 +221,8 @@ class LoginPage(tk.Frame):
                                sticky="W")
 
         # Buttons
+
+        # Sign up button
         self.signup_img = tk.PhotoImage(file="img/menu/signup_button.gif")
         signup_command = (lambda: controller.show_frame(SignupPage))
         self.signup_button = tk.Button(self, compound=tk.TOP, relief="flat",
@@ -228,6 +233,7 @@ class LoginPage(tk.Frame):
                                 pady=5)
         self.signup_button.image = self.signup_img
 
+        # Sign in button
         sign_in_img = tk.PhotoImage(file="img/menu/submit_button.gif")
         sign_in_command = (lambda: self.sign_in_button())
         sign_in_button = tk.Button(self, compound=tk.TOP, relief="flat",
@@ -237,6 +243,7 @@ class LoginPage(tk.Frame):
                             padx=20, pady=5)
         sign_in_button.image = sign_in_img
 
+        # Guest user button
         guest_img = tk.PhotoImage(file="img/menu/guest_button.gif")
         guest_button = tk.Button(self, compound=tk.TOP, relief="flat",
                                  width=150, height=40, image=guest_img,
@@ -258,6 +265,7 @@ class LoginPage(tk.Frame):
         print(name_and_pass)
         if username == '':
             if username == '' and password == '':
+        # Attempt to get all of the user's data if user in the user_data_file
                 print("Entering nothing will not work.")
             else:
                 print("You must enter a username.")
@@ -294,7 +302,7 @@ class SignupPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        # Header Image
+        # Header image
         self.Logo = tk.PhotoImage(file="img/logo.gif")
         self.sign_in_logo = tk.Label(self, image=self.Logo)
         self.sign_in_logo.grid(row=0, rowspan=12, column=0, columnspan=16)
@@ -303,23 +311,27 @@ class SignupPage(tk.Frame):
         signup_title = ttk.Label(self, text="Sign Up", font=LARGE_FONT)
         signup_title.grid(row=14, rowspan=2, column=5, columnspan=6, pady=15)
 
-        # Sign up Entries
+        # Sign up labels and entries
+
+        # Username label and entry
         username_label = ttk.Label(self, text="Username:", font=MEDIUM_FONT)
         username_label.grid(row=17, column=5, columnspan=5, sticky="W")
         self.username = ttk.Entry(self)
         self.username.grid(row=17, column=9, sticky="e")
 
+        # Password label and entry
         password_label = ttk.Label(self, text="Password:", font=MEDIUM_FONT)
         password_label.grid(row=18, column=5, columnspan=5, sticky="W")
         self.password = ttk.Entry(self)
         self.password.grid(row=18, column=9, sticky="e")
 
+        # Age label and entry
         age_label = ttk.Label(self, text="Age:", font=MEDIUM_FONT)
         age_label.grid(row=19, column=5, columnspan=5, sticky="W")
         self.age = ttk.Entry(self)
         self.age.grid(row=19, column=9, sticky="e")
 
-        # ERROR Labels
+        # Error labels
         self.name_error_label = ttk.Label(self, text="", foreground="red")
         self.name_error_label.grid(row=17, column=11, columnspan=4)
 
@@ -330,6 +342,8 @@ class SignupPage(tk.Frame):
         self.age_error_label.grid(row=19, column=11, columnspan=4)
 
         # Buttons
+
+        # Back button
         back_img = tk.PhotoImage(file="img/menu/back_button.gif")
         back_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=back_img,
@@ -337,6 +351,7 @@ class SignupPage(tk.Frame):
         back_button.grid(row=21, column=5, columnspan=4, sticky="W", pady=5)
         back_button.image = back_img
 
+        # Submit button
         submit_img = tk.PhotoImage(file="img/menu/submit_button.gif")
         submit_button = tk.Button(self, compound=tk.TOP, relief="flat",
                                   width=80, height=40, image=submit_img,
@@ -393,7 +408,7 @@ class UserPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        # Header Image
+        # Header image
         self.Logo = tk.PhotoImage(file="img/logo.gif")
         self.user_page_logo = tk.Label(self, image=self.Logo)
         self.user_page_logo.grid(row=0, rowspan=12, column=0, columnspan=16)
@@ -403,6 +418,8 @@ class UserPage(tk.Frame):
         welcome_label.grid(row=14, rowspan=2, column=1, columnspan=11, pady=15)
 
         # Buttons
+
+        # Shops button
         shop_img = tk.PhotoImage(file="img/shops/shop_button.gif")
         shop_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=shop_img,
@@ -410,6 +427,7 @@ class UserPage(tk.Frame):
         shop_button.grid(row=18, column=1, columnspan=11)
         shop_button.image = shop_img
 
+        # Games button
         game_img = tk.PhotoImage(file="img/games/game_button.gif")
         game_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=game_img,
@@ -417,6 +435,7 @@ class UserPage(tk.Frame):
         game_button.grid(row=19, column=1, columnspan=11)
         game_button.image = game_img
 
+        # Tasks button
         task_img = tk.PhotoImage(file="img/tasks/task_button.gif")
         task_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=task_img,
@@ -425,7 +444,7 @@ class UserPage(tk.Frame):
         task_button.image = task_img
 
         VirtualWorld.menu_bar(self, controller)
-
+        # Back button
         back_img = tk.PhotoImage(file="img/menu/back_button.gif")
         back_button = tk.Button(self, relief="flat", width=80, height=40,
                                 image=back_img,
