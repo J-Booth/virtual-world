@@ -368,6 +368,7 @@ class SignupPage(tk.Frame):
 
     def submit_button(self):
         """ Check user input then output a success/fail message. """
+        # TODO: Fix this so that it is a validatecommand.
         if Check.username(self.username.get()):
             username = self.username.get()
             if Check.password(self.password.get()):
@@ -680,6 +681,7 @@ class SettingsPage(tk.Frame):
                 self.toplevel.submit.grid(row=6, column=0, sticky="W", pady=5,
                                           padx=3)
             elif self.toplevel.setting == "Delete":
+                # Delete button
                 delete_button = ttk.Button(self.toplevel, text="Delete User",
                                            command=del_user)
                 delete_button.grid(row=6, column=0, sticky="W", pady=5, padx=3)
