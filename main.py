@@ -85,13 +85,7 @@ class VirtualWorld(tk.Tk):
 
     def menu_bar(self, controller):
         """ Create the lower Menu bar (for most frames). """
-        data = {}
-        with open(current_user_file, 'r') as file:
-            for line in file:
-                _user, _pwd, _years, _money = line.strip().split(',')
-                data[_user] = [_pwd, _years, _money]
-        username = _user
-        self.balance = data[username][2]
+        self.balance = User.get_current()['balance']
 
         hidden = True
         balance_formatted = 'Balance: $' + self.balance
@@ -104,7 +98,6 @@ class VirtualWorld(tk.Tk):
 
             :returns: a dict with 'username' and 'balance' as keys.
             """
-            nonlocal username
             username = User.get_current()['username']
             newest_balance = User.get_current()['balance']
 
