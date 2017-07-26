@@ -2686,18 +2686,18 @@ def main():
     Check.file()
     app = VirtualWorld()
 
-    w = 500  # width for the Tk root
-    h = 600  # height for the Tk root
+    w = 500  # Width for the Tk root
+    h = 600  # Height for the Tk root
 
-    # get screen width and height
-    ws = app.winfo_screenwidth()  # width of the screen
-    hs = app.winfo_screenheight()  # height of the screen
+    # Root window position
+    ws = app.winfo_screenwidth()  # Width of the screen
+    hs = app.winfo_screenheight()  # Height of the screen
 
-    # calculate x and y coordinates for the Tk root window
+    # Calculate x and y coordinates for the Tk root window
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
 
-    # set the dimensions of the screen
+    # Set the dimensions of the screen
     # and where it is placed
     app.geometry('%dx%d+%d+%d' % (w, h, x, y))
     app.resizable(width=False, height=False)
