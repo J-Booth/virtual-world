@@ -4,7 +4,6 @@
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
 *$py.class
 
 # C extensions
@@ -123,10 +122,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/python,windows
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/virtual-world-0.0.5.iml
-.idea/workspace.xml
 .idea/
