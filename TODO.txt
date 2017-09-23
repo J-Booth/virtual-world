@@ -1,5 +1,0 @@
-# TODO (A) Add +HangmanPage and +GuessMyNumberPage
-# TODO (B) Add a Help menu
-# TODO (C) Add +TaskPage
-# TODO (D) Add +RockPaperScissorsPage
-# TODO (E) @submit_button needs reworking so that it checks input live instead of onclick. +SignUp
