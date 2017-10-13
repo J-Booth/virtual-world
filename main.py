@@ -27,7 +27,7 @@
 
 from __init__ import *
 
-logger.disabled = False
+logger.disabled = True
 
 
 class VirtualWorld(tk.Tk):
