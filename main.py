@@ -1,29 +1,30 @@
-# =============================================================================
-# Author: Joshua Peter Booth
-# Purpose: Game (GUI)
-# File name: main.py
-# From: 2016 - 2017
-# =============================================================================
+# ===================================
+# Filename: main.py
+# Purpose: To setup and start the virtual-world program.
+#
+#
+# virtual-world
 # Copyright (C) 2017  Joshua Peter Booth
 #
-# This program is free software: you can redistribute it and/or modify
-# by the Free Software Foundation, either version 3 of the License, or
+# This file is part of virtual-world.
+#
+# virtual-world is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# virtual-world is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
+# GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Full license in GNU Affero General Public License v3.0.txt
+# You should have received a copy of the GNU General Public License
+# along with virtual-world (see LICENSE.md).
+# If not, see <http://www.gnu.org/licenses/>.
 #
 # Contact me:
 # Email: joshb00th@icloud.com
-#
-# =============================================================================
+# ===================================
 
 from __init__ import *
 
