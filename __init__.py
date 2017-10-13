@@ -7,6 +7,8 @@ import os
 import re
 import sys
 
+from _log import logger
+
 # Fonts
 LARGE_FONT = ("Verdana", 25)
 MEDIUM_FONT = ("Verdana", 12)
