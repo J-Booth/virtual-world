@@ -27,6 +27,8 @@
 
 from __init__ import *
 
+logger.disabled = False
+
 
 class VirtualWorld(tk.Tk):
 
@@ -258,9 +260,9 @@ class LoginPage(tk.Frame):
         # Attempt to get all of the user's data if user in the user_data_file
         if username == "":
             if username == "" and password == "":
-                print("Entering nothing will not work.")
+                logger.info("Entering nothing will not work.")
             else:
-                print("You must enter a username.")
+                logger.info("You must enter a username.")
             self.error_label.configure(text="Incorrect", foreground="red")
             self.error_label_2.configure(text="Username/Password",
                                          foreground="red")
@@ -272,9 +274,9 @@ class LoginPage(tk.Frame):
             self.error_label_2.configure(text="Accepted!", foreground="green")
             success_command = (lambda: self.controller.show_frame(UserPage))
             self.error_label_2.after(1250, success_command)
-            print("User '{}' Exists!".format(self.username.get()))
+            logger.info("User '{}' Exists!".format(self.username.get()))
         else:
-            print("Incorrect Username/Password")
+            logger.info("Incorrect Username/Password")
             self.error_label.configure(text="Incorrect", foreground="red")
             self.error_label_2.configure(text="Username/Password",
                                          foreground="red")
@@ -377,18 +379,18 @@ class SignupPage(tk.Frame):
                     age = self.age.get()
                     self.create_user(username, password, age)
                 else:
-                    print("Age Failed")
+                    logger.info("Age Failed")
                     self.name_error_label.configure(text="")
                     self.pwd_error_label.configure(text="")
                     self.age_error_label.configure(text="Invalid age",
                                                    foreground="red")
             else:
-                print("Password Failed")
+                logger.info("Password Failed")
                 self.name_error_label.configure(text="")
                 self.pwd_error_label.configure(text="Invalid password",
                                                foreground="red")
         else:
-            print("Username Failed.")
+            logger.info("Username Failed.")
             self.name_error_label.configure(text="Invalid username",
                                             foreground="red")
 
@@ -545,7 +547,7 @@ class SettingsPage(tk.Frame):
         if self.toplevel is None:
             current_user = Check.file()['current_user']
             if 'Guest,None,50,1000000' in list(current_user):
-                print('Guest users cannot change their information!')
+                logger.info('Guest users cannot change their information!')
                 return False
 
             self.toplevel = tk.Toplevel(self)
@@ -634,13 +636,13 @@ class SettingsPage(tk.Frame):
         del_user = (lambda: self.delete_user(username))
 
         if user_info == ',':
-            print("Nothing was entered")
+            logger.info("Nothing was entered")
             self.toplevel.user_info.configure(text="Nothing entered!",
                                               foreground="red")
             return False
 
         elif Check.in_user_data(Check.all_user_data(user_info)):
-            print("User '{}' Exists!".format(username))
+            logger.info("User '{}' Exists!".format(username))
             if self.toplevel.setting == "Name":
                 # New user label and entry
                 new_name_label = ttk.Label(self.toplevel, font=MEDIUM_FONT,
@@ -689,7 +691,7 @@ class SettingsPage(tk.Frame):
             else:
                 raise NameError("Setting name is invalid!")
         else:
-            print("User does not exist!")
+            logger.info("User does not exist!")
             return False
 
     def change_name(self, new_name):
@@ -706,7 +708,7 @@ class SettingsPage(tk.Frame):
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
             old_name = self.toplevel.username.get()
-            print("Changing username...")
+            logger.info("Changing username...")
             User.name_change(old_name, new_name)
             success_label.after(2500, lambda: self.remove_window())
         else:
@@ -729,7 +731,7 @@ class SettingsPage(tk.Frame):
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
             username = self.toplevel.username.get()
-            print("Changing password...")
+            logger.info("Changing password...")
             User.password_change(username, new_password)
             success_label.after(2500, lambda: self.remove_window())
         else:
@@ -752,7 +754,7 @@ class SettingsPage(tk.Frame):
             success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
             username = self.toplevel.username.get()
-            print("Changing age...")
+            logger.info("Changing age...")
             User.age_change(username, new_age)
             success_label.after(2500, lambda: self.remove_window())
         else:
@@ -772,7 +774,7 @@ class SettingsPage(tk.Frame):
                                   foreground="green")
         success_label.grid(row=8, rowspan=2, column=0, pady=5, padx=12)
 
-        print("Deleting user...")
+        logger.info("Deleting user...")
         User.delete(username)
         del_window = (lambda: self.remove_window_del())
         success_label.after(2500, del_window)
@@ -1039,7 +1041,7 @@ class CoffeeShopPage(tk.Frame):
             try:
                 inserted_value = int(inserted_value)
             except ValueError:
-                print("Input is not an integer!")
+                logger.error("Input is not an integer!")
         if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
             with open(COFFEE_DATA_F, 'r') as file:
                 current_data = [line.strip() for line in file]
@@ -1049,7 +1051,7 @@ class CoffeeShopPage(tk.Frame):
                     option, value = line.strip().split(':')
                     data[option] = value
             if data[_type] == str(allowed_value):
-                print("No changes to be made to {}".format(COFFEE_DATA_F))
+                logger.debug("No changes to be made to {}".format(COFFEE_DATA_F))
             else:
                 current_data.remove('{}:{}'.format(_type, data[_type]))
                 current_data.remove('{}:{}'.format('total', data['total']))
@@ -1093,7 +1095,7 @@ class CoffeeShopPage(tk.Frame):
                 self.total_cost_label.configure(text="$0.00")
                 self.buy_button.configure(state='disabled')
             with open(COFFEE_DATA_F, 'w') as file:
-                print("Writing new data to {}".format(COFFEE_DATA_F))
+                logger.debug("Writing new data to {}".format(COFFEE_DATA_F))
                 file.write('\n'.join(current_data))
             return True
         else:
@@ -1123,12 +1125,12 @@ class CoffeeShopPage(tk.Frame):
         # Attempt to get all of the user's data if user in the user_data_file
         amount = float(self.total_cost_label.cget("text").strip('$'))
         if name_and_pass == ',':
-            print("Nothing was entered!")
+            logger.info("Nothing was entered!")
             self.toplevel.user_info.configure(text="Nothing entered!",
                                               foreground="red")
             return False
         elif Check.in_user_data(full_user_data):
-            print("User '{}' Exists!".format(username))
+            logger.info("User '{}' Exists!".format(username))
             self.toplevel.user_info.configure(text="")
             # Confirm button
             purchase = (lambda: self.purchase(username, amount))
@@ -1466,7 +1468,7 @@ class TechShopPage(tk.Frame):
             try:
                 inserted_value = int(inserted_value)
             except ValueError:
-                print("Input is not an integer!")
+                logger.error("Input is not an integer!")
         if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
             with open(TECH_DATA_F, 'r') as file:
                 current_data = [line.strip() for line in file]
@@ -1476,7 +1478,7 @@ class TechShopPage(tk.Frame):
                     option, value = line.strip().split(':')
                     data[option] = value
             if data[_type] == str(allowed_value):
-                print("No changes to be made to {}".format(TECH_DATA_F))
+                logger.debug("No changes to be made to {}".format(TECH_DATA_F))
             else:
                 current_data.remove('{}:{}'.format(_type, data[_type]))
                 current_data.remove('{}:{}'.format('total', data['total']))
@@ -1520,7 +1522,7 @@ class TechShopPage(tk.Frame):
                 self.total_cost_label.configure(text="$0.00")
                 self.buy_button.configure(state='disabled')
             with open(TECH_DATA_F, 'w') as file:
-                print("Writing new data to {}".format(TECH_DATA_F))
+                logger.debug("Writing new data to {}".format(TECH_DATA_F))
                 file.write('\n'.join(current_data))
             return True
         else:
@@ -1550,12 +1552,12 @@ class TechShopPage(tk.Frame):
         # Attempt to get all of the user's data if user in the user_data_file
         amount = float(self.total_cost_label.cget("text").strip('$'))
         if name_and_pass == ',':
-            print("Nothing was entered!")
+            logger.info("Nothing was entered!")
             self.toplevel.user_info.configure(text="Nothing entered!",
                                               foreground="red")
             return False
         elif Check.in_user_data(full_user_data):
-            print("User '{}' Exists!".format(username))
+            logger.info("User '{}' Exists!".format(username))
             self.toplevel.user_info.configure(text="")
             # Confirm button
             purchase = (lambda: self.purchase(username, amount))
@@ -1901,7 +1903,7 @@ class PizzaShopPage(tk.Frame):
             try:
                 inserted_value = int(inserted_value)
             except ValueError:
-                print("Input is not an integer!")
+                logger.error("Input is not an integer!")
         if isinstance(inserted_value, int) and 0 < len(allowed_value) == 1:
             with open(PIZZA_DATA_F, 'r') as file:
                 current_data = [line.strip() for line in file]
@@ -1911,7 +1913,7 @@ class PizzaShopPage(tk.Frame):
                     option, value = line.strip().split(':')
                     data[option] = value
             if data[_type] == str(allowed_value):
-                print("No changes to be made to {}".format(PIZZA_DATA_F))
+                logger.debug("No changes to be made to {}".format(PIZZA_DATA_F))
             else:
                 current_data.remove('{}:{}'.format(_type, data[_type]))
                 current_data.remove('{}:{}'.format('total', data['total']))
@@ -1955,7 +1957,7 @@ class PizzaShopPage(tk.Frame):
                 self.total_cost_label.configure(text="$0.00")
                 self.buy_button.configure(state='disabled')
             with open(PIZZA_DATA_F, 'w') as file:
-                print("Writing new data to {}".format(PIZZA_DATA_F))
+                logger.debug("Writing new data to {}".format(PIZZA_DATA_F))
                 file.write('\n'.join(current_data))
             return True
         else:
@@ -1985,12 +1987,12 @@ class PizzaShopPage(tk.Frame):
         # Attempt to get all of the user's data if user in the user_data_file
         amount = float(self.total_cost_label.cget("text").strip('$'))
         if name_and_pass == ',':
-            print("Nothing was entered!")
+            logger.info("Nothing was entered!")
             self.toplevel.user_info.configure(text="Nothing entered!",
                                               foreground="red")
             return False
         elif Check.in_user_data(full_user_data):
-            print("User '{}' Exists!".format(username))
+            logger.info("User '{}' Exists!".format(username))
             self.toplevel.user_info.configure(text="")
             # Confirm button
             purchase = (lambda: self.purchase(username, amount))
@@ -2186,14 +2188,14 @@ class Check:
             while True:
                 try:
                     with open(options_file, 'r') as file:
-                        print("Opening the options file '{}'.".format(
+                        logger.debug("Opening the options file '{}'.".format(
                               options_file))
                         option_data = [line.strip() for line in file]
                     return option_data
                 except FileNotFoundError:
-                    print("Failed to open the 'options.txt' file")
+                    logger.error("Failed to open the 'options.txt' file")
                     with open(options_file, 'w') as file:
-                        print("Creating options.txt...")
+                        logger.debug("Creating options.txt...")
                         file.write("running:False\ntimes_opened:0")
 
         def user_names():
@@ -2206,14 +2208,14 @@ class Check:
             while True:
                 try:
                     with open(user_names_file, 'r') as file:
-                        print("Opening the user_names_file '{}'.".format(
+                        logger.debug("Opening the user_names_file '{}'.".format(
                               user_names_file))
                         name_data = [line.strip() for line in file]
                     return name_data
                 except FileNotFoundError:
-                    print("Failed to open '{}'.".format(user_names_file))
+                    logger.error("Failed to open '{}'.".format(user_names_file))
                     with open(user_names_file, 'w') as file:
-                        print("Creating '{}'...".format(user_names_file))
+                        logger.debug("Creating '{}'...".format(user_names_file))
                         file.write("Guest")
 
         def user_data():
@@ -2225,14 +2227,14 @@ class Check:
             while True:
                 try:
                     with open(user_data_file, 'r') as file:
-                        print("Opening the user_data_file '{}'.".format(
+                        logger.debug("Opening the user_data_file '{}'.".format(
                               user_data_file))
                         _all_data = [line.strip() for line in file]
                     return _all_data
                 except FileNotFoundError:
-                    print("Failed to open '{}'.".format(user_data_file))
+                    logger.error("Failed to open '{}'.".format(user_data_file))
                     with open(user_data_file, 'w') as file:
-                        print("Creating '{}'...".format(user_data_file))
+                        logger.debug("Creating '{}'...".format(user_data_file))
                         file.write("Guest,None,50,1000000")
 
         def current_user():
@@ -2245,14 +2247,16 @@ class Check:
             while True:
                 try:
                     with open(current_user_file, 'r') as file:
-                        print("Opening the current_user_file '{}'.".format(
-                              current_user_file))
+                        logger.debug("Opening the current_user_file '{}'."
+                                     .format(current_user_file))
                         current_user_data = [line.strip() for line in file]
                     return current_user_data
                 except FileNotFoundError:
-                    print("Failed to open '{}'".format(current_user_file))
+                    logger.error("Failed to open '{}'"
+                                 .format(current_user_file))
                     with open(current_user_file, 'w') as file:
-                        print("Creating '{}'...".format(current_user_file))
+                        logger.debug("Creating '{}'..."
+                                     .format(current_user_file))
                         file.write("Guest,None,50,1000000")
 
         return {"options": options(), "user_names": user_names(),
@@ -2304,17 +2308,17 @@ class Check:
                          else.
         """
         if name in Check.file()["user_names"]:
-            print("You cannot use that name as it is already taken.")
+            logger.info("You cannot use that name as it is already taken.")
             return False
         elif name == '':
-            print("You must enter something for your username.")
+            logger.info("You must enter something for your username.")
             return False
         elif re.match('^[\w\d_-]*$', name):
-            print("Username Accepted.")
+            logger.info("Username Accepted.")
             return True
         else:
-            print("Your username may only contain letters, numbers, ",
-                  "or underscores.")
+            logger.info("Your username may only contain letters, numbers, ",
+                        "or underscores.")
             return False
 
     @staticmethod
@@ -2328,10 +2332,10 @@ class Check:
                  False - If it is anything else.
         """
         if re.match('^[\w\d_-]*$', pwd):
-            print("Password Accepted.")
+            logger.info("Password Accepted.")
             return True
         else:
-            print("Your password may only contain letters, numbers, ",
+            logger.info("Your password may only contain letters, numbers, ",
                   "or underscores.")
             return False
 
@@ -2345,10 +2349,10 @@ class Check:
                  False - If does not match the regular expression.
         """
         if not(re.match('^[\d]{2,3}$', years_old)):
-            print("You must enter a two or three digit integer!")
+            logger.info("You must enter a two or three digit integer!")
             return False
         else:
-            print("Age accepted")
+            logger.info("Age accepted")
             return True
 
 
@@ -2377,7 +2381,7 @@ class User:
         user_names.append(username)
         with open(user_names_file, 'w') as f:
             f.write('\n'.join(user_names))
-        print("\nUser {} created!\n".format(username))
+        logger.info("\nUser {} created!\n".format(username))
 
     @staticmethod
     def get_data(username=None):
@@ -2483,7 +2487,7 @@ class User:
         with open(current_user_file, 'w') as f:
             f.write(new_user)
 
-        print("Your username is now '{}'.".format(new_name))
+        logger.info("Your username is now '{}'.".format(new_name))
 
     @staticmethod
     def password_change(username, new_password):
@@ -2506,7 +2510,7 @@ class User:
         with open(user_data_file, 'w') as f:
             f.write('\n'.join(user_data))
 
-        print("Your password is now '{}'.".format(new_password))
+        logger.info("Your password is now '{}'.".format(new_password))
 
     @staticmethod
     def age_change(username, new_age):
@@ -2529,7 +2533,7 @@ class User:
         with open(user_data_file, 'w') as f:
             f.write('\n'.join(user_data))
 
-        print("You are now {:d} years old.".format(int(new_age)))
+        logger.info("You are now {:d} years old.".format(int(new_age)))
 
     @staticmethod
     def delete(username):
@@ -2572,7 +2576,7 @@ class User:
             user_data = list(Check.file()['user_data'])
             password = User.get_data(username)['password']
             age = User.get_data(username)['age']
-            print("Withdrawing {} from {}".format(amount, username))
+            logger.info("Withdrawing {} from {}".format(amount, username))
             del_user = username + ',' + password + ',' + age + ',' + \
                 user_balance
             user_data.remove(del_user)
@@ -2603,7 +2607,7 @@ class User:
         user_data = list(Check.file()['user_data'])
         password = User.get_data(username)['password']
         age = User.get_data(username)['age']
-        print("Depositing {} to {}".format(amount, username))
+        logger.info("Depositing {} to {}".format(amount, username))
         del_user = username + ',' + password + ',' + age + ',' + \
             user_balance
         user_data.remove(del_user)
@@ -2672,9 +2676,9 @@ class Options:
 
     @staticmethod
     def print():
-        """ Print the options and their values. """
+        """ Print the options and their values to the log file. """
         for option in Options.get():
-            print("{}:{}".format(option, Options.get()[option]))
+            logger.debug("{}:{}".format(option, Options.get()[option]))
 
 
 def main():
